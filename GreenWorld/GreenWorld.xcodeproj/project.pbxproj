@@ -166,6 +166,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FA2ABE362B19D2B9004B63C7 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
 		FA884B9B2B15134A0039DB3B = {
 			isa = PBXGroup;
 			children = (
@@ -194,6 +201,7 @@
 		FA884BA62B15134A0039DB3B /* GreenWorld */ = {
 			isa = PBXGroup;
 			children = (
+				FA2ABE362B19D2B9004B63C7 /* ViewModels */,
 				FA884BEF2B1519EE0039DB3B /* MainTabbedView.swift */,
 				FA884BD92B1513900039DB3B /* Services */,
 				FA884BD82B1513850039DB3B /* ModelView */,
