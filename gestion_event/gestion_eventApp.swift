@@ -9,11 +9,12 @@ import SwiftUI
 
 @main
 struct gestion_eventApp: App {
+    let model = Model()
     let persistenceController = PersistenceController.shared
-
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(model)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
