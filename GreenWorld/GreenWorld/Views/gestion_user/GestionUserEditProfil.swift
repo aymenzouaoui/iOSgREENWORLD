@@ -1,9 +1,3 @@
-//
-//  GestionUserEditProfil.swift
-//  GreenWorld
-//
-//  Created by ChaimaEljed on 1/12/2023.
-//
 import SwiftUI
 
 struct GestionUserEditProfil: View {

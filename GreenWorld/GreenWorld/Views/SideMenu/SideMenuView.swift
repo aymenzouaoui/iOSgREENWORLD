@@ -12,7 +12,7 @@ enum SideMenuRowType: Int, CaseIterable{
     case favorite
     case Products
     case DechetsList
-    case EventListView
+    case Events
     case Quiz
     case profile
     
@@ -26,7 +26,7 @@ enum SideMenuRowType: Int, CaseIterable{
             return "Products"
         case .DechetsList:
             return "Dechets"
-        case .EventListView:
+        case .Events:
             return "Events"
         case .Quiz:
             return "Quiz"
@@ -45,7 +45,7 @@ enum SideMenuRowType: Int, CaseIterable{
             return "Products"
         case .DechetsList:
             return "Dechets"
-        case .EventListView:
+        case .Events:
             return "Events"
         case .Quiz:
             return "Quiz"

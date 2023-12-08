@@ -10,13 +10,13 @@ import SwiftUI
 struct dechetsForm: View {
     @State private var type: String = ""
        @State private var date: Date = Date()
+       @State private var heure: Date = Date()
        @State private var poids: String = ""
        @State private var adresse: String = ""
        @State private var isShowingDetails: Bool = false
 
        var body: some View {
            VStack {
-               
                TextField("type", text: $type)
                    .textFieldStyle(RoundedBorderTextFieldStyle())
                    .padding()
@@ -24,9 +24,10 @@ struct dechetsForm: View {
                DatePicker("Date", selection: $date, displayedComponents: .date)
                    .padding()
 
-            
+               DatePicker("Heure", selection: $heure, displayedComponents: .hourAndMinute)
+                   .padding()
 
-               TextField("capacite ", text: $poids)
+               TextField("Poids", text: $poids)
                    .textFieldStyle(RoundedBorderTextFieldStyle())
                    .padding()
 
@@ -45,12 +46,10 @@ struct dechetsForm: View {
                        .cornerRadius(10)
                }
                .sheet(isPresented: $isShowingDetails) {
-                   DetaildechetView(type: type, date: date,poids: poids, adresse: adresse)
+                   DetaildechetView(type: type, date: date, heure: heure, poids: poids, adresse: adresse)
                }
            }
-           //.padding(.vertical)
-          // .padding(.horizontal)
-           .background(Image("6743"))
+           .padding()
        }
    }
 

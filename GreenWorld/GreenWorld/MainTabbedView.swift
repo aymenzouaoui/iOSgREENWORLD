@@ -21,11 +21,11 @@ struct MainTabbedView: View {
                     .tag(1)
                 DechetsList(presentSideMenu: $presentSideMenu)
                     .tag(3)
-                EventListView(presentSideMenu: $presentSideMenu)
+                Event(presentSideMenu: $presentSideMenu)
                     .tag(4)
                 Product(presentSideMenu: $presentSideMenu)
                     .tag(2)
-                Profile(presentSideMenu: $presentSideMenu)
+                //GestionUserProfil(presentSideMenu: $presentSideMenu)
                     .tag(6)
             }
             
@@ -33,4 +33,3 @@ struct MainTabbedView: View {
         }
     }
 }
-

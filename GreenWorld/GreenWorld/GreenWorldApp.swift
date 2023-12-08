@@ -10,11 +10,10 @@ import SwiftUI
 @main
 struct GreenWorldApp: App {
     let persistenceController = PersistenceController.shared
-@StateObject private var model = Model()
+
     var body: some Scene {
         WindowGroup {
             GestionUserSignIn()
-                .environmentObject(model)
                
         }
     }
