@@ -10,6 +10,7 @@ import SwiftUI
 struct DetaildechetView: View {
        var type: String
         var date: Date
+        var heure: Date
         var poids: String
         var adresse: String
 
@@ -17,6 +18,7 @@ struct DetaildechetView: View {
             VStack {
                 Text("Type: \(type)")
                 Text("Date: \(date)") //DateFormatter.shortDate)")
+                Text("Heure: \(heure)") //DateFormatter.shortTime)")
                 Text("Poids: \(poids)")
                 Text("Adresse: \(adresse)")
             }
@@ -28,6 +30,6 @@ struct DetaildechetView: View {
     struct DetaildechetView_Previews: PreviewProvider {
         static var previews: some View {
             let exampleDate = Date() // Replace with your desired date
-            return DetaildechetView(type: "Example Type", date: exampleDate, poids: "Example Weight", adresse: "Example Address")
+            return DetaildechetView(type: "Example Type", date: exampleDate, heure: exampleDate, poids: "Example Weight", adresse: "Example Address")
         }
     }
