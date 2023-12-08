@@ -18,4 +18,6 @@ class Model: ObservableObject {
     // Detail View
     @Published var showDetail: Bool     = false
     @Published var selectedCourse: Int  = 0
+
+      
 }

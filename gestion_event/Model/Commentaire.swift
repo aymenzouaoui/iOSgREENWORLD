@@ -1,39 +1,27 @@
 import Foundation
 
-struct Commentaire: Identifiable {
-    let id: String
-    let date: Date
+struct Commentaire: Identifiable, Decodable {
+    var id: String // Use UUID for the id property
+    let date: String
     let contenu: String
     let eventID: String
     let userID: String
     
-    init?(json: [String: Any]) {
-        guard
-            let id = json["_id"] as? String,
-            let date_String = json["date"] as? String,
-            let date = ISO8601DateFormatter().date(from: date_String),
-            let contenu = json["Contenu"] as? String,
-            let eventID = json["eventID"] as? String,
-            let userID = json["userID"] as? String
-        else {
-            return nil
-        }
-
-        self.id = id
-        self.date = date
-        self.contenu = contenu
-        self.eventID = eventID
-        self.userID = userID
+    enum CodingKeys: String, CodingKey {
+        case id = "_id" // Match the key in the JSON data
+        case date
+        case contenu = "Contenu"
+        case eventID
+        case userID
     }
-}
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
 
-extension Commentaire {
-    func toJSON() -> [String: Any] {
-        return [
-            "date": date,
-            "Contenu": contenu,
-            "eventID": eventID,
-            "userID": userID
-        ]
+        id = try container.decode(String.self, forKey: .id)
+        contenu = try container.decode(String.self, forKey: .contenu)
+        eventID = try container.decode(String.self, forKey: .eventID)
+        userID = try container.decode(String.self, forKey: .userID)
+        date = try container.decode(String.self, forKey: .date)
     }
 }

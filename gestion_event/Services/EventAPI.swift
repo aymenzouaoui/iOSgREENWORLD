@@ -17,23 +17,23 @@ class EventAPI: ObservableObject {
 
     func getAllEvents(completion: @escaping (Result<[Event], Error>) -> Void) {
         guard let url = URL(string: "http://localhost:9090/event") else {
-            print("Invalid URL")
-            completion(.failure(NetworkError.invalidURL))
-            return
-        }
+                   print("Invalid URL")
+                   completion(.failure(NetworkError.invalidURL))
+                   return
+               }
 
-        print("Fetching events...")
+               print("Fetching events...")
 
-        let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
-            if let error = error {
-                print("Request error: \(error.localizedDescription)")
-                completion(.failure(error))
-                return
-            }
+               let task = URLSession.shared.dataTask(with: url) { (data, response, error) in
+                   if let error = error {
+                       print("Request error: \(error.localizedDescription)")
+                       completion(.failure(error))
+                       return
+                   }
 
-            guard let httpResponse = response as? HTTPURLResponse else {
-                print("Invalid HTTP Response")
-                completion(.failure(NetworkError.invalidResponse))
+                   guard let httpResponse = response as? HTTPURLResponse else {
+                       print("Invalid HTTP Response")
+                       completion(.failure(NetworkError.invalidResponse))
                 return
             }
 

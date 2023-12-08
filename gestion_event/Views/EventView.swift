@@ -19,7 +19,54 @@ struct EventView: View {
     @State private var showCommentairenView = false
     @State private var isFavorite = false
     @ObservedObject var eventAPI = EventAPI.shared
+    @State private var comments: [Commentaire] = [] // Nouvelle liste de commentaires
+    var formattedDates: [String] {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
 
+        return comments.map { comment in
+            if let date = dateFormatter.date(from: comment.date) {
+                dateFormatter.dateFormat = "MMM dd, yyyy HH:mm:ss"
+                return dateFormatter.string(from: date)
+            } else {
+                return "Invalid Date"
+            }
+        }
+    }
+
+
+    
+    func loadComments(forEventID eventID: String) {
+        guard let url = URL(string: "http://localhost:9090/comment?eventID=\(eventID)") else {
+            print("Invalid URL for comments")
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Error fetching comments: \(error)")
+            
+                return
+            }
+            
+            guard let data = data else {
+                print("No data received for comments")
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                let fetchedComments = try decoder.decode([Commentaire].self, from: data)
+                comments = fetchedComments
+                print("commentaires -----------------")
+                print(fetchedComments)
+            } catch {
+                print("Error decoding comments: \(error)")
+            }
+        }.resume()
+    }
     var namespace: Namespace.ID
 
     var body: some View {
@@ -49,6 +96,14 @@ struct EventView: View {
 
             closeButton
         }
+        .onAppear {
+                  fadeIn()
+                  // Chargez les commentaires ici après avoir initialisé la vue
+            loadComments(forEventID: event.id.uuidString)
+              }
+              .onChange(of: show) { newValue in
+                  fadeOut()
+              }
         .onAppear {
             fadeIn()
         }
@@ -166,13 +221,11 @@ extension EventView {
                     ReservationView(eventID: event.id)
                 }
                 
-                
                 Button(action: {
                     showCommentairenView = true
                 }) {
                     HStack {
                         Image(systemName: "message")
-                        Text("Commenter")
                     }
                     .font(.headline)
                     .foregroundColor(.white)
@@ -181,11 +234,16 @@ extension EventView {
                     .cornerRadius(10)
                 }
                 .sheet(isPresented: $showCommentairenView) {
-                    CommentView()
+                    CommentView(event: event, associatedComments: comments)
+                }
+                .onAppear {
+                    loadComments(forEventID: event.id.uuidString)
                 }
             }
+            .padding(40)
+
         }
-        .padding(20)
+        
     }
     
     var overlayContent: some View {
@@ -230,6 +288,43 @@ extension EventView {
             Text(event.description)
                 .font(.footnote)
                 .matchedGeometryEffect(id: "description\(event.id)", in: namespace)
+            // Comments
+                   VStack(alignment: .leading, spacing: 8) {
+                       ForEach(comments) { comment in
+                           HStack {
+                               VStack(alignment: .leading) {
+                                   Text(comment.contenu)
+                                   Text(comment.date)
+                                       .font(.caption)
+                                       .foregroundColor(.secondary)
+                               }
+                               
+                               Spacer()
+                               
+                               // Delete icon
+                               Button(action: {
+                                   // Implement delete action here
+                                   print("Delete comment tapped")
+                               }) {
+                                   Image(systemName: "trash")
+                                       .foregroundColor(.red)
+                                       .font(.system(size: 16))
+                               }
+                               
+                               // Update icon
+                               Button(action: {
+                                   // Implement update action here
+                                   print("Update comment tapped")
+                               }) {
+                                   Image(systemName: "pencil")
+                                       .foregroundColor(.blue)
+                                       .font(.system(size: 16))
+                               }
+                           }
+                           .padding(.vertical, 8)
+                       }
+                   }
+            
             HStack {
                 Spacer()
                 Button(action: {

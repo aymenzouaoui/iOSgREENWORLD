@@ -12,7 +12,8 @@ struct Reservation: Identifiable {
             let date_reservationString = json["date_reservation"] as? String,
             let date_reservation = ISO8601DateFormatter().date(from: date_reservationString),
             let eventIDString = json["eventID"] as? String,
-                    let eventID = UUID(uuidString: eventIDString),            let userID = json["userID"] as? String
+                    let eventID = UUID(uuidString: eventIDString),            
+                let userID = json["userID"] as? String
         else {
             return nil
         }
