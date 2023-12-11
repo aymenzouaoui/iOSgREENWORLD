@@ -43,22 +43,26 @@ class EventAPI: ObservableObject {
                 return
             }
 
-            if let data = data {
-                do {
-                    let decoder = JSONDecoder()
-                    decoder.dateDecodingStrategy = .iso8601
-                    let eventsData = try decoder.decode([Event].self, from: data)
+                   if let data = data {
+                       do {
+                           let json = try JSONSerialization.jsonObject(with: data, options: [])
+                           print("Raw JSON data: \(json)")
+                           
+                           let decoder = JSONDecoder()
+                           decoder.dateDecodingStrategy = .iso8601
+                           let eventsData = try decoder.decode([Event].self, from: data)
 
-                    DispatchQueue.main.async {
-                        self.events = eventsData
-                    }
+                           DispatchQueue.main.async {
+                               self.events = eventsData
+                           }
 
-                    completion(.success(eventsData))
-                } catch {
-                    print("JSON decoding error: \(error)")
-                    completion(.failure(error))
-                }
-            } else {
+                           completion(.success(eventsData))
+                       } catch {
+                           print("JSON decoding error: \(error)")
+                           completion(.failure(error))
+                       }
+                   }
+                    else {
                 print("No data received from the server.")
                 completion(.failure(NetworkError.noData))
             }

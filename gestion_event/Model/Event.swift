@@ -19,11 +19,12 @@ struct Event: Identifiable, Decodable {
     var image: String
     var latitude: Double?
     var longitude: Double?
+    var comments: [Commentaire]?
     var __v: Int
     var background: String?
     var logo: String?
     var index: Int?
-    
+
     private enum CodingKeys: String, CodingKey {
         case id
         case titre
@@ -36,7 +37,11 @@ struct Event: Identifiable, Decodable {
         case image
         case latitude
         case longitude
+        case comments  // Include the property in coding keys
         case __v
+        case background
+        case logo
+        case index
     }
     
     init(from decoder: Decoder) throws {
@@ -53,10 +58,13 @@ struct Event: Identifiable, Decodable {
         image = try container.decode(String.self, forKey: .image)
         latitude = try container.decodeIfPresent(Double.self, forKey: .latitude)
         longitude = try container.decodeIfPresent(Double.self, forKey: .longitude)
+        comments = try container.decodeIfPresent([Commentaire].self, forKey: .comments)  // Decode as [Commentaire]
         __v = try container.decode(Int.self, forKey: .__v)
+        background = try container.decodeIfPresent(String.self, forKey: .background)
+        logo = try container.decodeIfPresent(String.self, forKey: .logo)
+        index = try container.decodeIfPresent(Int.self, forKey: .index)
     }
 }
-
 extension DateFormatter {
     static let iso8601Full: DateFormatter = {
         let formatter = DateFormatter()

@@ -86,61 +86,55 @@ struct CommentView: View {
             }
             
         }
-        func submitFeedback() {
-            guard let url = URL(string: "http://localhost:9090/comment") else {
-                print("Invalid URL")
-                return
-            }
-            let dateFormatter = ISO8601DateFormatter()
-            let dateFormatted = dateFormatter.string(from: Date())
-            let commentData: [String: Any] = [
-                "date": dateFormatted,
-                "Contenu": feedbackText,
-                "eventID": "654f5960635043f9b9a3623d",
-                "userID": "654f70fb5cb452f9138dbf46"
-            ]
-            
-            do {
-                let jsonData = try JSONSerialization.data(withJSONObject: commentData)
-                
-                var request = URLRequest(url: url)
-                request.httpMethod = "POST"
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                request.httpBody = jsonData
-                
-                // Make the reservation request
-                URLSession.shared.dataTask(with: request) { data, response, error in
-                    // Handle the response (success or failure)
-                    DispatchQueue.main.async { // Update UI on the main thread
-                        if let error = error {
-                            print("Error making commentaire request: \(error)")
-                            // Display an error message
-                            reservationError = "Error making commentaire. Please try again."
-                        } else if let data = data {
-                            // Parse the response if needed
-                            // For example, if your backend returns a success message
-                            if let result = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                                print("Commentaire success: \(result)")
-                                // Display a success message
-                                reservationError = "Commentaire added successfully!"
-                                isCommentAdded = true // Marque le commentaire comme ajouté avec succès
-                                
-                            }
-                        } else {
-                            print("Unexpected response format")
-                            // Display an error message
-                            reservationError = "Unexpected response format."
-                        }
-                    }
-                }.resume()
-                
-            } catch {
-                print("Error serializing comment data: \(error)")
-                // Display an error message
-                reservationError = "Error serializing comment data."
-            }
+    func submitFeedback() {
+        guard let url = URL(string: "http://localhost:9090/comment") else {
+            print("Invalid URL")
+            return
         }
-        
+
+        let dateFormatter = ISO8601DateFormatter()
+        let dateFormatted = dateFormatter.string(from: Date())
+
+        let commentData: [String: Any] = [
+            "date": dateFormatted,
+            "Contenu": feedbackText,
+            "eventID": event.id, // Utilisez l'identifiant de l'événement
+            "userID": "654f70fb5cb452f9138dbf46"
+        ]
+
+        do {
+            let jsonData = try JSONSerialization.data(withJSONObject: commentData)
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = jsonData
+
+            // Faites la requête de commentaire
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                DispatchQueue.main.async { // Mettez à jour l'interface utilisateur sur le thread principal
+                    if let error = error {
+                        print("Error making commentaire request: \(error)")
+                        reservationError = "Error making commentaire. Please try again."
+                    } else if let data = data {
+                        if let result = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                            print("Commentaire success: \(result)")
+                            reservationError = "Commentaire added successfully!"
+                            isCommentAdded = true
+                        }
+                    } else {
+                        print("Unexpected response format")
+                        reservationError = "Unexpected response format."
+                    }
+                }
+            }.resume()
+
+        } catch {
+            print("Error serializing comment data: \(error)")
+            reservationError = "Error serializing comment data."
+        }
+    }
+
         func cancelFeedback() {
             // Logic to cancel the feedback
             feedbackText = ""

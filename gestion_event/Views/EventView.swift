@@ -15,58 +15,114 @@ struct EventView: View {
     @State var isDraggable = true
     @State var appear = [false, false, false]
     var event: Event
+    @State private var commentaireText: String = ""
+    @State private var isEditingComment = false
+      @State private var editedComment: Commentaire?
+      @State private var updatedCommentContent = ""
     @State private var showReservationView = false
     @State private var showCommentairenView = false
     @State private var isFavorite = false
     @ObservedObject var eventAPI = EventAPI.shared
-    @State private var comments: [Commentaire] = [] // Nouvelle liste de commentaires
-    var formattedDates: [String] {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
-        dateFormatter.locale = Locale(identifier: "en_US_POSIX")
-        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+    @State private var errorMessage: String?
+    @State private var feedbackText = ""
 
-        return comments.map { comment in
-            if let date = dateFormatter.date(from: comment.date) {
-                dateFormatter.dateFormat = "MMM dd, yyyy HH:mm:ss"
-                return dateFormatter.string(from: date)
-            } else {
-                return "Invalid Date"
-            }
-        }
+    @State private var comments: [Comment] = [] // Nouvelle liste de commentaires
+    let eventID = UUID().uuidString
+
+    func currentDateAsString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        return dateFormatter.string(from: Date())
     }
 
 
-    
-    func loadComments(forEventID eventID: String) {
-        guard let url = URL(string: "http://localhost:9090/comment?eventID=\(eventID)") else {
-            print("Invalid URL for comments")
+    func deleteComment(commentID: String) {
+        guard let url = URL(string: "http://localhost:9090/comment/\(commentID)") else {
+            print("Invalid URL for deleting comment")
             return
         }
-        
-        URLSession.shared.dataTask(with: url) { data, response, error in
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
-                print("Error fetching comments: \(error)")
-            
+                print("Error deleting comment: \(error)")
                 return
             }
-            
-            guard let data = data else {
-                print("No data received for comments")
+
+            guard let response = response as? HTTPURLResponse else {
+                print("Invalid response for deleting comment")
                 return
             }
-            
-            do {
-                let decoder = JSONDecoder()
-                let fetchedComments = try decoder.decode([Commentaire].self, from: data)
-                comments = fetchedComments
-                print("commentaires -----------------")
-                print(fetchedComments)
-            } catch {
-                print("Error decoding comments: \(error)")
+
+            if response.statusCode == 200 {
+                print("Comment deleted successfully")
+                // Handle success
+            } else {
+                print("Failed to delete comment. Status code: \(response.statusCode)")
+                // Handle failure
             }
         }.resume()
+    
     }
+    func addComment(contenu: String, date: String, eventID: String, userID: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let url = URL(string: "http://localhost:9090/comment") else {
+            fatalError("Invalid URL for addOnce endpoint")
+        }
+        // Imprimer les données que vous allez envoyer dans la demande
+            print("Request Data:")
+            print("Contenu: \(contenu)")
+            print("Date: \(date)")
+            print("EventID: \(eventID)")
+            print("UserID: \(userID)")
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        let parameters: [String: Any] = [
+            "Contenu": contenu,
+            "date": date,
+            "eventID":eventID,
+            "userID": userID
+        ]
+
+        do {
+                request.httpBody = try JSONSerialization.data(withJSONObject: parameters)
+            } catch {
+                print("Error serializing JSON: \(error)")
+                completion(.failure(error))
+                return
+            }
+
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                       print("URLSession error: \(error)")
+                       completion(.failure(error))
+                       return
+                   }
+
+            guard let httpResponse = response as? HTTPURLResponse else {
+                        let error = NSError(domain: "Invalid response", code: 0, userInfo: nil)
+                        print("Invalid response: \(error)")
+                        completion(.failure(error))
+                        return
+                    }
+
+            if (200..<300).contains(httpResponse.statusCode) {
+                // Successful response
+                completion(.success(()))
+            } else {
+                // Handle error response
+                let errorMessage = "HTTP Status Code: \(httpResponse.statusCode)"
+                            print("Error response: \(errorMessage)")
+                            completion(.failure(NSError(domain: errorMessage, code: httpResponse.statusCode, userInfo: nil)))
+                        }
+        }.resume()
+    }
+
     var namespace: Namespace.ID
 
     var body: some View {
@@ -99,7 +155,7 @@ struct EventView: View {
         .onAppear {
                   fadeIn()
                   // Chargez les commentaires ici après avoir initialisé la vue
-            loadComments(forEventID: event.id.uuidString)
+                     
               }
               .onChange(of: show) { newValue in
                   fadeOut()
@@ -113,9 +169,6 @@ struct EventView: View {
     }
 }
 
-// ... (EventView extension and helper functions)
-
-// Separate extension for clarity
 extension EventView {
     var closeButton: some View {
         Button {
@@ -209,7 +262,7 @@ extension EventView {
                 }) {
                     HStack {
                         Image(systemName: "person.fill.checkmark")
-                        Text("Participer")
+                       // Text("Participer")
                     }
                     .font(.headline)
                     .foregroundColor(.white)
@@ -218,7 +271,7 @@ extension EventView {
                     .cornerRadius(10)
                 }
                 .sheet(isPresented: $showReservationView) {
-                    ReservationView(eventID: event.id)
+                   // ReservationView(eventID: ev.)
                 }
                 
                 Button(action: {
@@ -233,11 +286,9 @@ extension EventView {
                     .background(Color.green)
                     .cornerRadius(10)
                 }
-                .sheet(isPresented: $showCommentairenView) {
-                    CommentView(event: event, associatedComments: comments)
-                }
+             
                 .onAppear {
-                    loadComments(forEventID: event.id.uuidString)
+                   
                 }
             }
             .padding(40)
@@ -288,42 +339,60 @@ extension EventView {
             Text(event.description)
                 .font(.footnote)
                 .matchedGeometryEffect(id: "description\(event.id)", in: namespace)
-            // Comments
-                   VStack(alignment: .leading, spacing: 8) {
-                       ForEach(comments) { comment in
-                           HStack {
-                               VStack(alignment: .leading) {
-                                   Text(comment.contenu)
-                                   Text(comment.date)
-                                       .font(.caption)
-                                       .foregroundColor(.secondary)
-                               }
-                               
-                               Spacer()
-                               
-                               // Delete icon
-                               Button(action: {
-                                   // Implement delete action here
-                                   print("Delete comment tapped")
-                               }) {
-                                   Image(systemName: "trash")
-                                       .foregroundColor(.red)
-                                       .font(.system(size: 16))
-                               }
-                               
-                               // Update icon
-                               Button(action: {
-                                   // Implement update action here
-                                   print("Update comment tapped")
-                               }) {
-                                   Image(systemName: "pencil")
-                                       .foregroundColor(.blue)
-                                       .font(.system(size: 16))
-                               }
-                           }
-                           .padding(.vertical, 8)
-                       }
-                   }
+           
+            Text("Les commentaires : ")
+                .font(.footnote.weight(.semibold))
+
+            List(event.comments ?? [], id: \.id) { comment in
+                VStack(alignment: .leading, spacing: 8) { // Ajoutez spacing pour définir l'espacement entre les éléments du VStack
+                    Text("Contenu:")
+                        .font(.headline)
+                        .foregroundColor(.blue) // Changez la couleur du texte selon vos préférences
+                    Text(comment.contenu)
+                        .font(.body)
+                        .foregroundColor(.black) // Changez la couleur du texte selon vos préférences
+
+                    Text("Date:")
+                        .font(.headline)
+                        .foregroundColor(.blue)
+                    Text(comment.date)
+                        .font(.body)
+                        .foregroundColor(.black)
+                    
+
+                }
+                
+                .padding(8) // Ajoutez un padding pour l'espacement autour du VStack
+                .background(Color.gray.opacity(0.1)) // Ajoutez un arrière-plan au VStack
+                .cornerRadius(8) // Ajoutez un coin arrondi au VStack
+            }
+
+            HStack{
+                TextField("Entrez votre commentaire", text: $commentaireText)
+                                .padding()
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .autocapitalization(.none)
+                Button(action: {
+                    addComment(contenu: commentaireText, date: currentDateAsString(), eventID: eventID, userID: "654f70fb5cb452f9138dbf46"){ result in
+                        switch result {
+                        case .success:
+                            // Gérer le succès, si nécessaire
+                            print("Commentaire ajouté avec succès")
+                        case .failure(let error as NSError):
+                            let errorMessage = error.userInfo["message"] as? String ?? "Erreur inconnue"
+                            print("Erreur lors de l'ajout du commentaire: \(errorMessage)")
+
+                        }
+                    }
+                }) {
+                             Text("Ajouter un commentaire")
+                                 .padding()
+                                 .foregroundColor(.white)
+                                 .background(Color.green)
+                                 .cornerRadius(10)
+                         }
+            }
+         
             
             HStack {
                 Spacer()
@@ -337,6 +406,8 @@ extension EventView {
                         .clipShape(Circle())
                 }
             }
+            
+
         }
         .padding(.top, 35)
         .padding(.horizontal)
@@ -460,4 +531,5 @@ extension EventView {
             return  EventView(show: .constant(true), event: sampleEvent,namespace: namespace)
         }
     }
+    
 }

@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		36455D182B27198A00ACCCB4 /* CommentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36455D172B27198A00ACCCB4 /* CommentViewModel.swift */; };
+		36455D1A2B271DF500ACCCB4 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36455D192B271DF500ACCCB4 /* Comment.swift */; };
 		365FD71E2B223F4400DBA30B /* Reservation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365FD71D2B223F4400DBA30B /* Reservation.swift */; };
 		365FD7222B2278B900DBA30B /* Commentaire.swift in Sources */ = {isa = PBXBuildFile; fileRef = 365FD7212B2278B800DBA30B /* Commentaire.swift */; };
 		368526A22B1952F2006D7DE5 /* gestion_eventApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 368526A12B1952F2006D7DE5 /* gestion_eventApp.swift */; };
@@ -54,6 +56,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		36455D172B27198A00ACCCB4 /* CommentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentViewModel.swift; sourceTree = "<group>"; };
+		36455D192B271DF500ACCCB4 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		365FD71D2B223F4400DBA30B /* Reservation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reservation.swift; sourceTree = "<group>"; };
 		365FD7212B2278B800DBA30B /* Commentaire.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Commentaire.swift; sourceTree = "<group>"; };
 		3685269E2B1952F2006D7DE5 /* gestion_event.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = gestion_event.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -114,6 +118,7 @@
 		368526952B1952F2006D7DE5 = {
 			isa = PBXGroup;
 			children = (
+				36455D172B27198A00ACCCB4 /* CommentViewModel.swift */,
 				368526A02B1952F2006D7DE5 /* gestion_event */,
 				368526B62B1952F5006D7DE5 /* gestion_eventTests */,
 				368526C02B1952F5006D7DE5 /* gestion_eventUITests */,
@@ -193,6 +198,7 @@
 				368526E72B195467006D7DE5 /* PreferenceKeys.swift */,
 				365FD71D2B223F4400DBA30B /* Reservation.swift */,
 				365FD7212B2278B800DBA30B /* Commentaire.swift */,
+				36455D192B271DF500ACCCB4 /* Comment.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -363,6 +369,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				368526D32B195384006D7DE5 /* EventListView.swift in Sources */,
+				36455D1A2B271DF500ACCCB4 /* Comment.swift in Sources */,
 				368526E42B195442006D7DE5 /* Event.swift in Sources */,
 				365FD71E2B223F4400DBA30B /* Reservation.swift in Sources */,
 				368526AE2B1952F4006D7DE5 /* gestion_event.xcdatamodeld in Sources */,
@@ -378,6 +385,7 @@
 				368526E02B19541F006D7DE5 /* FeaturedItem.swift in Sources */,
 				368526D52B195395006D7DE5 /* EventView.swift in Sources */,
 				368526E22B195430006D7DE5 /* EventItem.swift in Sources */,
+				36455D182B27198A00ACCCB4 /* CommentViewModel.swift in Sources */,
 				368526F02B1954D0006D7DE5 /* Styles.swift in Sources */,
 				368526EE2B1954C9006D7DE5 /* Modifiers.swift in Sources */,
 				368526A42B1952F2006D7DE5 /* ContentView.swift in Sources */,
