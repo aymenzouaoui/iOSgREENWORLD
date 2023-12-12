@@ -19,9 +19,12 @@
 		42F0F5D72B196D3D007C8866 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0F5D62B196D3D007C8866 /* SessionManager.swift */; };
 		42F0F5D92B196D4E007C8866 /* UserService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0F5D82B196D4E007C8866 /* UserService.swift */; };
 		42F0F5DB2B196D65007C8866 /* UserValidationCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0F5DA2B196D65007C8866 /* UserValidationCodeView.swift */; };
+		D135BF5E2B24A54500D36CA1 /* profiltest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D135BF5D2B24A54500D36CA1 /* profiltest.swift */; };
 		D16DC2A62B227BA0009AE4E2 /* SingnUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16DC2A52B227BA0009AE4E2 /* SingnUpViewModel.swift */; };
 		D1CF4E7B2B22A2BE007847EF /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CF4E7A2B22A2BE007847EF /* Profile.swift */; };
 		D1CF4E7F2B22E670007847EF /* ApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CF4E7E2B22E670007847EF /* ApiManager.swift */; };
+		D1CF4E812B22F88A007847EF /* EditProfilEmailUserName.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CF4E802B22F88A007847EF /* EditProfilEmailUserName.swift */; };
+		D1CF4E832B22F9FA007847EF /* EditPassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CF4E822B22F9FA007847EF /* EditPassword.swift */; };
 		FA884BA82B15134A0039DB3B /* GreenWorldApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA884BA72B15134A0039DB3B /* GreenWorldApp.swift */; };
 		FA884BAA2B15134A0039DB3B /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA884BA92B15134A0039DB3B /* ContentView.swift */; };
 		FA884BAC2B15134B0039DB3B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FA884BAB2B15134B0039DB3B /* Assets.xcassets */; };
@@ -80,9 +83,12 @@
 		42F0F5D62B196D3D007C8866 /* SessionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		42F0F5D82B196D4E007C8866 /* UserService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserService.swift; sourceTree = "<group>"; };
 		42F0F5DA2B196D65007C8866 /* UserValidationCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserValidationCodeView.swift; sourceTree = "<group>"; };
+		D135BF5D2B24A54500D36CA1 /* profiltest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profiltest.swift; sourceTree = "<group>"; };
 		D16DC2A52B227BA0009AE4E2 /* SingnUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingnUpViewModel.swift; sourceTree = "<group>"; };
 		D1CF4E7A2B22A2BE007847EF /* Profile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Profile.swift; path = ../../../../../../../Profile.swift; sourceTree = "<group>"; };
 		D1CF4E7E2B22E670007847EF /* ApiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiManager.swift; sourceTree = "<group>"; };
+		D1CF4E802B22F88A007847EF /* EditProfilEmailUserName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfilEmailUserName.swift; sourceTree = "<group>"; };
+		D1CF4E822B22F9FA007847EF /* EditPassword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPassword.swift; sourceTree = "<group>"; };
 		FA884BA42B15134A0039DB3B /* GreenWorld.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GreenWorld.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA884BA72B15134A0039DB3B /* GreenWorldApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreenWorldApp.swift; sourceTree = "<group>"; };
 		FA884BA92B15134A0039DB3B /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -285,6 +291,9 @@
 				42F0F5DA2B196D65007C8866 /* UserValidationCodeView.swift */,
 				42F0F5D42B196D22007C8866 /* GestionUserValidationPassword.swift */,
 				42F0F5CA2B19573A007C8866 /* GestionUserEditProfil.swift */,
+				D1CF4E802B22F88A007847EF /* EditProfilEmailUserName.swift */,
+				D1CF4E822B22F9FA007847EF /* EditPassword.swift */,
+				D135BF5D2B24A54500D36CA1 /* profiltest.swift */,
 			);
 			path = gestion_user;
 			sourceTree = "<group>";
@@ -477,6 +486,7 @@
 				42F0F5CF2B196CB0007C8866 /* GestionUserSignIn.swift in Sources */,
 				FAA8F7CD2B192E3A001FAF0A /* DetaildechetView.swift in Sources */,
 				42F0F5D72B196D3D007C8866 /* SessionManager.swift in Sources */,
+				D1CF4E812B22F88A007847EF /* EditProfilEmailUserName.swift in Sources */,
 				42F0F5D12B196CD8007C8866 /* GestionUserSignUp.swift in Sources */,
 				FA884BF02B1519EE0039DB3B /* MainTabbedView.swift in Sources */,
 				FAA8F7D12B192FB2001FAF0A /* CustomShape.swift in Sources */,
@@ -487,6 +497,7 @@
 				42F0F5D92B196D4E007C8866 /* UserService.swift in Sources */,
 				FA884BB12B15134B0039DB3B /* Persistence.swift in Sources */,
 				FAA8F7C72B192D33001FAF0A /* ItemView.swift in Sources */,
+				D135BF5E2B24A54500D36CA1 /* profiltest.swift in Sources */,
 				FA884BAA2B15134A0039DB3B /* ContentView.swift in Sources */,
 				42F0F5CB2B19573A007C8866 /* GestionUserEditProfil.swift in Sources */,
 				FA884BE62B1515E60039DB3B /* Product.swift in Sources */,
@@ -496,6 +507,7 @@
 				42F0F5D52B196D22007C8866 /* GestionUserValidationPassword.swift in Sources */,
 				FA884BA82B15134A0039DB3B /* GreenWorldApp.swift in Sources */,
 				D1CF4E7B2B22A2BE007847EF /* Profile.swift in Sources */,
+				D1CF4E832B22F9FA007847EF /* EditPassword.swift in Sources */,
 				42F0F5DB2B196D65007C8866 /* UserValidationCodeView.swift in Sources */,
 				42F0F5CD2B196C58007C8866 /* GestionUserProfil.swift in Sources */,
 				FA884BE02B1515A30039DB3B /* Home.swift in Sources */,

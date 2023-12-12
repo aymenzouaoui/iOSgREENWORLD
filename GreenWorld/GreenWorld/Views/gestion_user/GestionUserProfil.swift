@@ -32,6 +32,8 @@ struct GestionUserProfil: View {
                     VStack {
                         NavigationLink(destination: GestionUserEditProfil()) {
                             ZStack {
+                              
+
                                 if let imageURL = URL(string: userViewModel.user?.imageRes ?? "") {
                                     AsyncImage(url: imageURL) { phase in
                                         switch phase {
@@ -41,17 +43,13 @@ struct GestionUserProfil: View {
                                         case .success(let image):
                                             // Image chargée avec succès
                                             image
-                                              
-                                                .aspectRatio(contentMode: .fit)
-                                                .clipShape(Circle()) // Appliquer la forme de cercle à l'image
-                                                .frame(width: 100, height: 100) // Ajuster la taille du cercle
-                                                .overlay(Circle().stroke(Color.green, lineWidth: 3)) // Ajouter un contour au cercle
-                                                .position(x: 379, y: 120)
-                                           
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: 200, height: 200)
-                                                .clipShape(Circle())
-                                                .padding()
+                                                .resizable()
+                                                .scaledToFit()
+                                                .clipShape(Ellipse()) // Clip the image into an ellipse
+                                                .frame(width: 120, height: 120) // Adjust the size of the clipped image
+                                                .overlay(Ellipse().stroke(Color.green, lineWidth: 3)) // Add a stroke to the clipped image
+                                                .shadow(color: Color(red: 0.40, green: 0.40, blue: 0.40, opacity: 0.15), radius: 10, y: 4)
+                                                .position(x: 250, y: -70)
                                         case .failure(let error):
                                             // Erreur lors du chargement de l'image
                                             Text("Erreur de chargement de l'image")
@@ -65,54 +63,48 @@ struct GestionUserProfil: View {
                                     Text("URL de l'image invalide")
                                 }
                             }
-                            .padding(.bottom, 160)
+
+                            .padding(100)
                         }
-                        .padding(.bottom, 160)
+                      
                      
                         
-                       
-                        
-                        Text(userViewModel.user?.email ?? "")
-                            .font(.system(size: 15))
-                            .fontWeight(.light)
-                            .foregroundColor(.blue)
-                            .offset(x: -10, y: -205)
-                        Text(userViewModel.user?.numTel ?? "")
-                            .font(.system(size: 15))
-                            .fontWeight(.light)
-                            .foregroundColor(.blue)
-                            .offset(x: -10, y: -205)
-                        
-                        Image(systemName: "checkmark.seal.fill")
-                            .font(.system(size: 20))
-                            .foregroundColor(Color(red: 0.06, green: 0.21, blue: 0.19))
-                            .offset(x: 65, y: -250)
-                        
-                        Text("20")
-                        
-                            .font(.system(size: 22))
-                        
-                            .fontWeight(.bold)
-                            .foregroundColor(.black)
-                            .offset(x: -70, y: -230)
-                        
-                        Text("200 Diamond")
-                            .font(.system(size: 20))
-                            .fontWeight(.bold)
-                            .foregroundColor(.black)
-                            .offset(x: 70, y: -250)
-                        
-                        Text("Record")
-                            .font(.system(size: 13))
-                            .fontWeight(.light)
-                            .foregroundColor(.black)
-                            .offset(x: -70, y: -250)
-                        
-                        Text("Sold")
-                            .font(.system(size: 13))
-                            .fontWeight(.light)
-                            .foregroundColor(.black)
-                            .offset(x: 70, y: -265)
+                        HStack{
+                            VStack{
+                                Text(userViewModel.user?.email ?? "")
+                                    .font(.system(size: 22))
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.black)
+                                    .offset(x: -10, y: -205)
+                                Text(userViewModel.user?.numTel ?? "")
+                                    .font(.system(size: 22))
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.black)
+                                    .offset(x: -10, y: -200)
+                            }.padding(5)
+                                .offset(x:0 , y: 40)
+                            Image(systemName: "checkmark.seal.fill")
+                                .font(.system(size: 35))
+                                .foregroundColor(Color(red: 0.06, green: 0.21, blue: 0.19))
+                                .offset(x: -60, y: -270)
+                        }.padding(30)
+                        HStack{
+                            Text(userViewModel.user?.score != nil ? String(userViewModel.user!.score!) : "")
+                                .font(.system(size: 22))
+                                .fontWeight(.bold)
+                                .foregroundColor(.black)
+                                .offset(x: -70, y: -230)
+                            
+                            
+                            Text("Record")
+                                .font(.system(size: 13))
+                                .fontWeight(.light)
+                                .foregroundColor(.black)
+                                .offset(x: -55, y: -230)
+                            
+                        }.padding(10)
+                            .offset(x: 0, y: -100)
+                   
                     }
                     HStack{
                        
@@ -266,6 +258,7 @@ struct GestionUserProfil: View {
                 
             }
             .onAppear {
+                
                 userViewModel.getUser()
                 print(userViewModel.getUser())
             }

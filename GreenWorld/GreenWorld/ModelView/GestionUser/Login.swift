@@ -17,6 +17,35 @@ class UserViewModel: ObservableObject {
         self.userService = userService
     }
     
+    
+    struct UserPassword: Codable {
+        let id: UUID
+        let password: String
+        let newPassword: String
+        
+    }
+
+    
+    @Published var errorMessage: String?
+    @Published var successMessage: String?
+
+    func updatePassword(userId: String, currentPassword: String, newPassword: String, confirmNewPassword: String) {
+        UserService.shared.updatePassword(userId: userId, currentPassword: currentPassword, newPassword: newPassword, confirmNewPassword: confirmNewPassword) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let message):
+                    self.errorMessage = nil
+                    self.successMessage = message
+                case .failure(let error):
+                    self.successMessage = nil
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+        }
+    }
+    
+    
+   
     func forgetPassword(numTel: String, completion: @escaping (Result<String, Error>) -> Void) {
             // Implement your password recovery logic here
             // For example, you might send an API request to get an OTP
@@ -73,7 +102,7 @@ class UserViewModel: ObservableObject {
             }
         }
     }
-    
+ 
     
     func getUser() {
         guard let userID = UserDefaults.standard.string(forKey: "userID") else {
@@ -97,6 +126,7 @@ class UserViewModel: ObservableObject {
     }
     // Other methods...
 }
+
 
 struct UserSign: Codable {
     let id: UUID

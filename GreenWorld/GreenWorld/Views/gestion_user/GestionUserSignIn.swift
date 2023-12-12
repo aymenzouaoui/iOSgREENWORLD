@@ -49,7 +49,7 @@ struct GestionUserSignIn: View {
                                    
                                    
                    
-                    Text("Welcomme Green World")
+                    Text("Welcome Green World")
                         .font(.title)
                         .fontWeight(.bold)
                         .padding(40)
@@ -57,25 +57,26 @@ struct GestionUserSignIn: View {
                     
                     Text("Please enter your data to connect")
                     
-                    ZStack(alignment: .leading) {
-                        if numTel.isEmpty {
-                            Text("email")
-                                .foregroundColor(.gray)
-                                .padding(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
-                        }
-                        HStack {
-                            Image(systemName: "mail")
-                                .foregroundColor(.gray)
-                                .padding(.leading, 8)
-                            TextField("", text: $email)
-                                .font(.title3)
-                                .padding(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
-                        }
-                    }
-                    .frame(width: 343, height: 51)
-                    .background(Color.black.opacity(0.05))
-                    .cornerRadius(12)
-                    .padding(10)
+                               ZStack(alignment: .leading) {
+                                   if email.isEmpty {
+                                       Text("Email")
+                                           .foregroundColor(.gray)
+                                           .padding(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
+                                   }
+                                   HStack {
+                                       Image(systemName: "envelope")
+                                           .foregroundColor(.gray)
+                                           .padding(.leading, 8)
+                                       TextField("", text: $email)
+                                           .font(.title3)
+                                           .padding(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
+                                   }
+                               }
+                               .frame(width: 343, height: 51)
+                               .background(Color.black.opacity(0.05))
+                               .cornerRadius(12)
+                               .padding(10)
+                               
                     
                     ZStack(alignment: .leading) {
                         if password.isEmpty {
@@ -122,13 +123,15 @@ struct GestionUserSignIn: View {
                     .foregroundColor(Color(red: 0.06, green: 0.21, blue: 0.19))
                     .padding(EdgeInsets(top: 5, leading: 55, bottom: 5, trailing: -150))
                     
-                    NavigationLink(destination: GestionUserProfil(), isActive: $navigationLinkActive) {
+                    NavigationLink(destination: EditPassword(), isActive: $navigationLinkActive) {
                            EmptyView()
                        }
                                Button(action: {
                                    // Call the signIn method from the UserService
                                    //userService.signIn(email: email, password: password)
-                                   userService.signIn(email: "test@example.com", password: "password123") { result in
+                                 userService.signIn(email: "Aymen1@gmail.com", password: "password123")
+                                   
+                                   { result in
                                        switch result {
                                        case .success(let token):
                                           

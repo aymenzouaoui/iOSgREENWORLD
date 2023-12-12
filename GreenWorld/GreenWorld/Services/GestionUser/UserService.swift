@@ -184,7 +184,7 @@ import Foundation
 
 class UserService {
     static let shared = UserService()
-    private let baseURL = "http://172.18.24.23:9090"
+    private let baseURL = "http://172.18.24.23:9091"
 
     
   
@@ -274,7 +274,7 @@ class UserService {
     }
     
     func getUser(userID: String, completion: @escaping (Result<User, Error>) -> Void) {
-            let getUserURL = URL(string: "\(baseURL)/user/aa/\(userID)")!
+            let getUserURL = URL(string: "\(baseURL)/user/\(userID)")!
             print("useruser")
             URLSession.shared.dataTask(with: getUserURL) { data, response, error in
                 if let error = error {
@@ -309,7 +309,7 @@ class UserService {
     
     
     func forgotPassword(email: String, completion: @escaping (Result<Void, Error>) -> Void) {
-            let forgotPasswordURL = URL(string: "\(baseURL)/User/password")!
+            let forgotPasswordURL = URL(string: "\(baseURL)/User/sendResetCode")!
             var request = URLRequest(url: forgotPasswordURL)
             request.httpMethod = "POST"
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -378,130 +378,40 @@ class UserService {
                 }
             }.resume()
         }
-    func updatePassword(email: String, password: String, confirmPassword: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        let updatePasswordURL = URL(string: "\(baseURL)/User/newpass")!
+    
+    func updatePassword(userId: String, currentPassword: String, newPassword: String, confirmNewPassword: String, completion: @escaping (Result<String, Error>) -> Void) {
+        let updatePasswordURL = URL(string: "\(baseURL)/user/updatePassword/\(userId)")!
+
         var request = URLRequest(url: updatePasswordURL)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let updatePasswordData: [String: Any] = [
-            "email": email,
-            "password": password,
-            "confirmPassword": confirmPassword
-        ]
-        
-        request.httpBody = try? JSONSerialization.data(withJSONObject: updatePasswordData)
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            guard let httpResponse = response as? HTTPURLResponse else {
-                completion(.failure(NetworkError.invalidResponse))
-                return
-            }
-            
-            if httpResponse.statusCode == 200 {
-                // Password updated successfully
-                completion(.success(()))
-            } else {
-                // Failed to update password
-                completion(.failure(NetworkError.requestFailed(httpResponse.statusCode)))
-            }
-        }.resume()
-    }
-    
-  
-    
-    
-    
-    func updateUserUsername(username: String, completion: @escaping (Result<User, Error>) -> Void) {
-        guard let userID = UserDefaults.standard.string(forKey: "UserID") else {
-            completion(.failure(NetworkError.userIDNotFound))
-            return
-        }
-        
-        guard let url = URL(string: "\(baseURL)/User/username/\(userID)") else {
-            completion(.failure(NetworkError.invalidURL))
-            return
-        }
-        
-        var request = URLRequest(url: url)
         request.httpMethod = "PUT"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         let parameters: [String: Any] = [
-            "username": username
+            "currentPassword": currentPassword,
+            "newPassword": newPassword,
+            "confirmNewPassword": confirmNewPassword
         ]
-        
+
         do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
+            request.httpBody = try JSONSerialization.data(withJSONObject: parameters)
         } catch {
             completion(.failure(error))
             return
         }
-        
+
         URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
+            guard let data = data, error == nil else {
+                completion(.failure(error ?? NSError(domain: "NetworkError", code: 0, userInfo: nil)))
                 return
             }
-            
-            guard let data = data else {
-                completion(.failure(UserServiceError.noData))
-                return
-            }
-            
+
             do {
-                let updatedUser = try JSONDecoder().decode(User.self, from: data)
-                completion(.success(updatedUser))
-            } catch {
-                completion(.failure(error))
-            }
-        }.resume()
-    }
-    func updateUserPhone(phoneNumber: String, completion: @escaping (Result<User, Error>) -> Void) {
-        guard let userID = UserDefaults.standard.string(forKey: "UserID") else {
-            completion(.failure(NetworkError.userIDNotFound))
-            return
-        }
-        
-        guard let url = URL(string: "\(baseURL)/User/phone/\(userID)") else {
-            completion(.failure(NetworkError.invalidURL))
-            return
-        }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "PUT"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let parameters: [String: Any] = [
-            "phoneNumber": phoneNumber
-        ]
-        
-        do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: .prettyPrinted)
-        } catch {
-            completion(.failure(error))
-            return
-        }
-        
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            guard let data = data else {
-                completion(.failure(UserServiceError.noData))
-                return
-            }
-            
-            do {
-                let updatedUser = try JSONDecoder().decode(User.self, from: data)
-                completion(.success(updatedUser))
+                let responseJSON = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+                if let message = responseJSON?["message"] as? String {
+                    completion(.success(message))
+                } else {
+                    completion(.failure(NSError(domain: "InvalidResponse", code: 0, userInfo: nil)))
+                }
             } catch {
                 completion(.failure(error))
             }
