@@ -7,9 +7,10 @@ struct ResetPasswordView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
     @State private var isSuccess = false
+
     var body: some View {
         VStack {
-            Image("restepas") // Replace "resetpass" with your image's name
+            Image("resetpass") // Replace with your image's name
                 .resizable()
                 .scaledToFit()
                 .frame(width: 200, height: 100) // Adjust the size as needed
@@ -30,27 +31,32 @@ struct ResetPasswordView: View {
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(5)
                 .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green))
+
             Button("Réinitialiser") {
                 let generator = UIImpactFeedbackGenerator(style: .medium)
-                        if newPassword == confirmPassword {
-                            let email = UserDefaults.standard.string(forKey: "email") ?? ""
-                            userViewModel.updatePassword(email: email, newPassword: newPassword) { result in
-                                switch result {
-                                case .success(let message):
-                                    alertMessage = message
-                                    isSuccess = true
-                                case .failure(let error):
-                                    alertMessage = "Failed to reset password: \(error.localizedDescription)"
-                                    isSuccess = false
-                                }
-                                showAlert = true
+                generator.impactOccurred()
+
+                if newPassword == confirmPassword {
+                    let email = UserDefaults.standard.string(forKey: "email") ?? ""
+                    userViewModel.updatePassword(email: email, newPassword: newPassword) { result in
+                        DispatchQueue.main.async {
+                            switch result {
+                            case .success(let message):
+                                alertMessage = message
+                                isSuccess = true
+                            case .failure(let error):
+                                alertMessage = "Failed to reset password: \(error.localizedDescription)"
+                                isSuccess = false
                             }
-                        } else {
-                            alertMessage = "Passwords do not match. Please try again."
-                            isSuccess = false
                             showAlert = true
                         }
                     }
+                } else {
+                    alertMessage = "Passwords do not match. Please try again."
+                    isSuccess = false
+                    showAlert = true
+                }
+            }
             .padding()
             .background(Color.green)
             .foregroundColor(Color.white)
@@ -70,4 +76,3 @@ struct ResetPasswordView_Previews: PreviewProvider {
         ResetPasswordView()
     }
 }
-Extra trailing closure passed in call
