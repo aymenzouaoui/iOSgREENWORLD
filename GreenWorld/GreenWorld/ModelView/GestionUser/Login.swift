@@ -8,7 +8,9 @@ class UserViewModel: ObservableObject {
     @Published var userSign: UserSign?
     @Published var user: User?
     @Published var token: String?
-    
+    @Published var  message: String?
+    @Published var isError = false
+    @Published var currentUser: User?
     private let userService: UserService
     private var cancellables = Set<AnyCancellable>()
     
@@ -124,7 +126,75 @@ class UserViewModel: ObservableObject {
             }
         }
     }
-    // Other methods...
+  
+    
+    
+    
+    
+    
+    func sendResetCode(email: String) {
+            UserService.shared.sendResetCode(email: email) { [weak self] result in
+                DispatchQueue.main.async {
+                    switch result {
+                        
+                    case .success(let message):
+                        self?.message = message
+                        self?.isError = false
+                    case .failure(let error):
+                        self?.message = error.localizedDescription
+                        self?.isError = true
+                    }
+                }
+            }
+        }
+      
+    
+    
+    func verifyResetCode(email: String, resetCode: String) {
+            userService.verifyResetCode(email: email, resetCode: resetCode) { [weak self] result in
+                DispatchQueue.main.async {
+                    switch result {
+                        
+                    case .success(let user):
+                        self?.currentUser = user
+                        self?.message = "Reset code verified successfully."
+                        self?.isError = false
+                        
+                        // Save the token in the user defaults
+                        UserDefaults.standard.setValue(user.email, forKey: "email")
+                       
+                    case .failure(let error):
+                        if let networkError = error as? NetworkResponseError {
+                            switch networkError {
+                            case .custom(let message):
+                                self?.message = message
+                            }
+                        } else {
+                            self?.message = error.localizedDescription
+                        }
+                        self?.isError = true
+                    }
+                }
+            }
+        }
+    
+    
+    func updatenewPassword( email: String, newPassword: String) {
+        UserService.shared.updatenewPassword( email: email, newPassword: email) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let message):
+                    self.errorMessage = nil
+                    self.successMessage = message
+                case .failure(let error):
+                    self.successMessage = nil
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+        }
+    }
+    
+    
 }
 
 

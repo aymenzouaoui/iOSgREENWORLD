@@ -1,6 +1,7 @@
 import SwiftUI
-
+/*
 struct ResetPasswordView: View {
+    @StateObject private var userViewModel = UserViewModel()
     @State private var newPassword: String = ""
     @State private var confirmPassword: String = ""
     @State private var showAlert = false
@@ -9,10 +10,10 @@ struct ResetPasswordView: View {
 
     var body: some View {
         VStack {
-            Image("YourImageName") // Replace "YourImageName" with your image's name
+            Image("restepas") // Replace with your image's name
                 .resizable()
                 .scaledToFit()
-                .frame(width: 200, height: 100) // Adjust the size as needed
+                .frame(width: 200, height: 100)
                 .padding(.top)
 
             Text("Reset Password")
@@ -30,17 +31,29 @@ struct ResetPasswordView: View {
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(5)
                 .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green))
-
-            Button("Submit") {
-                if newPassword == confirmPassword {
-                    alertMessage = "Password has been reset successfully."
+Button("Réinitialiser") {
+    // Add your button action here
+    if newPassword == confirmPassword {
+        let email = UserDefaults.standard.string(forKey: "email") ?? ""
+        userViewModel.updatenewPassword(email: email, newPassword: newPassword) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let message):
+                    alertMessage = message
                     isSuccess = true
-                } else {
-                    alertMessage = "Passwords do not match. Please try again."
+                case .failure(let error):
+                    alertMessage = "Failed to reset password: \(error.localizedDescription)"
                     isSuccess = false
                 }
                 showAlert = true
             }
+        }
+    } else {
+        alertMessage = "Passwords do not match. Please try again."
+        isSuccess = false
+        showAlert = true
+    }
+}
             .padding()
             .background(isSuccess ? Color.green : Color.blue)
             .foregroundColor(Color.white)
@@ -60,3 +73,4 @@ struct ResetPasswordView_Previews: PreviewProvider {
         ResetPasswordView()
     }
 }
+*/

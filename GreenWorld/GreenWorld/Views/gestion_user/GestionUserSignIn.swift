@@ -115,7 +115,7 @@ struct GestionUserSignIn: View {
                         .foregroundColor(.gray)
                         .padding(.leading, 10)
                     
-                               NavigationLink(destination: GestionUserValidationPassword()
+                               NavigationLink(destination: GestionUserForgetPassword()
                     ) {
                         Text("Forgot password?")
                     }
@@ -129,7 +129,7 @@ struct GestionUserSignIn: View {
                                Button(action: {
                                    // Call the signIn method from the UserService
                                    //userService.signIn(email: email, password: password)
-                                 userService.signIn(email: "Aymen1@gmail.com", password: "password123")
+                                 userService.signIn(email: "Arafet@gmail.com", password: "12345678")
                                    
                                    { result in
                                        switch result {

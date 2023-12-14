@@ -1,11 +1,10 @@
 import SwiftUI
 
 struct GestionUserForgetPassword: View {
+    @StateObject private var userViewModel = UserViewModel()
     @State private var selectedMethod = "Email"
     @State private var emailOrPhone: String = ""
     @State private var showAlert = false
-    @State private var alertTitle = ""
-    @State private var alertMessage = ""
     @State private var navigateToValidation = false
 
     var body: some View {
@@ -20,7 +19,7 @@ struct GestionUserForgetPassword: View {
 
                 Spacer()
 
-                Image("validation") // Make sure this image is included in your assets
+                Image("validation") // Ensure this image is in your assets
                     .resizable()
                     .frame(width: 262, height: 236)
                     .padding(.top, 20)
@@ -40,14 +39,17 @@ struct GestionUserForgetPassword: View {
                     .padding(.horizontal, 20)
 
                 Button("Resend Code") {
-                    // Implement the action to resend the code
+                    if selectedMethod == "Email" {
+                        resendCode()
+                    } else {
+                        // Handle phone number case if necessary
+                    }
                 }
                 .foregroundColor(Color.blue)
                 .padding()
 
-                NavigationLink(destination: UserValidationCodeView(), isActive: $navigateToValidation) {
+                NavigationLink(destination: UserValidationCodeView(email: emailOrPhone), isActive: $navigateToValidation) {
                     Button("Validate") {
-                        // Perform validation logic if necessary
                         navigateToValidation = true
                     }
                     .frame(maxWidth: .infinity)
@@ -62,17 +64,20 @@ struct GestionUserForgetPassword: View {
             }
             .alert(isPresented: $showAlert) {
                 Alert(
-                    title: Text(alertTitle),
-                    message: Text(alertMessage),
+                    title: Text("Message"),
+                
                     dismissButton: .default(Text("OK"))
                 )
             }
             .navigationBarHidden(true)
         }
     }
+
+    private func resendCode() {
+        userViewModel.sendResetCode(email: emailOrPhone)
+        showAlert = true
+    }
 }
-
-
 
 struct GestionUserForgetPassword_Previews: PreviewProvider {
     static var previews: some View {
