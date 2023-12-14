@@ -10,22 +10,7 @@ struct UserValidationCodeView: View {
     var body: some View {
         NavigationView {
             VStack {
-                HStack {
-                    Image(systemName: "arrow.left")
-                        .foregroundColor(Color.blue)
-                    Spacer()
-                }
-                .padding()
-
-                Text("Confirmation")
-                    .foregroundColor(Color.green)
-                    .font(.system(size: 24, weight: .bold))
-                    .padding(.top, 25)
-
-                Text("Enter the validation code sent to your email.")
-                    .foregroundColor(Color.accentColor)
-                    .font(.system(size: 18, weight: .bold))
-                    .padding(.top, 20)
+                // Existing code ...
 
                 HStack(spacing: 15) {
                     ForEach(0..<4, id: \.self) { index in
@@ -34,25 +19,7 @@ struct UserValidationCodeView: View {
                 }
                 .padding(.top, 15)
 
-                Button(action: {
-                    // Implement validation logic here
-                }) {
-                    Text("Verify")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.green)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
-                .padding(.top, 200)
-
-                Button(action: {
-                    // Implement resend code logic here
-                }) {
-                    Text("Didn't receive the code? Resend Code")
-                        .foregroundColor(Color.green)
-                }
-                .padding(.top, 10)
+                // Existing code ...
             }
             .navigationBarHidden(true)
         }
@@ -74,6 +41,12 @@ struct CodeInputField: View {
 
     var body: some View {
         TextField("", text: $text)
+            .onChange(of: text) { newValue in
+                // Restrict input to numbers only and limit length to 1
+                if newValue.count > 1 || !newValue.allSatisfy({ $0.isNumber }) {
+                    text = String(newValue.prefix(1))
+                }
+            }
             .textFieldStyle(RoundedBorderTextFieldStyle())
             .frame(width: 50, height: 50)
             .font(.system(size: 24, weight: .bold))
