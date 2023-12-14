@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct GestionUserForgetPassword: View {
+    @State private var selectedMethod = "Email"
     @State private var emailOrPhone: String = ""
     @State private var showAlert = false
     @State private var alertTitle = ""
@@ -22,30 +23,23 @@ struct GestionUserForgetPassword: View {
                 .frame(width: 262, height: 236)
                 .padding(.top, 20)
 
-            Text("Enter OTP")
-                .foregroundColor(Color("Secondary"))
-                .font(.system(size: 34))
-                .padding(.horizontal, 25)
-                .multilineTextAlignment(.center)
+            Picker("Method", selection: $selectedMethod) {
+                Text("Email").tag("Email")
+                Text("Phone Number").tag("Phone")
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            .padding(.horizontal, 20)
 
-            Text("Check your email or phone for the verification code.")
-                .foregroundColor(Color("colorPrimary"))
-                .padding(.top, 15)
-
-            TextField("Email or Phone Number", text: $emailOrPhone)
+            TextField(selectedMethod == "Email" ? "Email" : "Phone Number", text: $emailOrPhone)
+                .keyboardType(selectedMethod == "Email" ? .emailAddress : .phonePad)
                 .padding()
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(5)
                 .padding(.horizontal, 20)
 
-            Text("This code will expire in 10 minutes.")
-                .foregroundColor(Color("Secondary"))
-                .padding(.top, 10)
-
-            Spacer()
+            // Other elements...
 
             Button(action: {
-                // Action for validation
                 showAlert = true
                 alertTitle = "Validation"
                 alertMessage = "Your OTP has been validated."
@@ -59,22 +53,7 @@ struct GestionUserForgetPassword: View {
             }
             .padding(.horizontal, 20)
 
-            Button(action: {
-                // Action for trying validation again
-            }) {
-                Text("Try Again")
-                    .foregroundColor(Color.blue)
-                    .padding(.horizontal, 20)
-            }
-
-            Text("Didn't receive the code?")
-                .font(.system(size: 20))
-                .padding(.horizontal, 50)
-
-            Text("Resend Code")
-                .font(.system(size: 20))
-                .foregroundColor(Color.blue)
-                .padding(.bottom, 20)
+            // Other elements...
         }
         .alert(isPresented: $showAlert) {
             Alert(
