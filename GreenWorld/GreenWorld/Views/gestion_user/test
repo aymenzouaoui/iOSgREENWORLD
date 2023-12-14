@@ -126,3 +126,4 @@ struct UserValidationCodeView_Previews: PreviewProvider {
         UserValidationCodeView(email: "example@example.com")
     }
 }
+  func verifyResetCode(email: String, resetCode: String, completion: @escaping (Bool) -> Void) {
