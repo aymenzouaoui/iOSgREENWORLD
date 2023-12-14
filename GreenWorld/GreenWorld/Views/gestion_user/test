@@ -35,7 +35,7 @@ Button("Réinitialiser") {
     // Add your button action here
     if newPassword == confirmPassword {
         let email = UserDefaults.standard.string(forKey: "email") ?? ""
-        userViewModel.updatePassword(email: email, newPassword: newPassword) { result in
+        userViewModel.updatenewPassword(email: email, newPassword: newPassword) { result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let message):
@@ -74,18 +74,3 @@ struct ResetPasswordView_Previews: PreviewProvider {
     }
 }
 
-
-
-func updatePassword(email: String, newPassword: String, completion: @escaping (Result<String, Error>) -> Void) {
-    userService.updatePassword(email: email, newPassword: newPassword) { [weak self] result in
-        DispatchQueue.main.async {
-            switch result {
-            case .success(let message):
-                self?.handleSuccess(message)
-            case .failure(let error):
-                self?.handleFailure(error)
-            }
-            completion(result)
-        }
-    }
-}
