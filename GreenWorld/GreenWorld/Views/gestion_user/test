@@ -9,6 +9,7 @@ struct UserValidationCodeView: View {
     @State private var code3: String = ""
     @State private var code4: String = ""
     @State private var navigateToResetPassword = false
+    @State  private var showToast = false
 
     var body: some View {
         NavigationView {
@@ -84,12 +85,15 @@ struct UserValidationCodeView: View {
     // Function to verify the code
     private func verifyCode() {
         let fullCode = code1 + code2 + code3 + code4
-        userViewModel.verifyResetCode(email: email, resetCode: fullCode) { [weak self] isSuccess in
+        userViewModel.verifyResetCode(email: email, resetCode: fullCode) { isSuccess in
             DispatchQueue.main.async {
                 if isSuccess {
-                    self?.navigateToResetPassword = true
+                    self.navigateToResetPassword = true
                 } else {
-                    // Handle failed verification (e.g., show an alert or toast message)
+                    self.showToast = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        self.showToast = false
+                    }
                 }
             }
         }
@@ -126,32 +130,3 @@ struct UserValidationCodeView_Previews: PreviewProvider {
         UserValidationCodeView(email: "example@example.com")
     }
 }
-  func verifyResetCode(email: String, resetCode: String, completion: @escaping (Bool) -> Void) {
-
-
-
-/Users/macmini4/Desktop/iOSgREENWORLD-main/GreenWorld/GreenWorld/Views/gestion_user/UserValidationCodeView.swift:87:82 'weak' may only be applied to class and class-bound protocol types, not 'UserValidationCodeView'
-
-
-
-private func verifyCode() {
-    let fullCode = code1 + code2 + code3 + code4
-    userViewModel.verifyResetCode(email: email, resetCode: fullCode) { isSuccess in
-        DispatchQueue.main.async {
-            if isSuccess {
-                self.navigateToResetPassword = true
-            } else {
-                self.showToast = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    self.showToast = false
-                }
-            }
-        }
-    }
-}
-
-
-
-/Users/macmini4/Desktop/iOSgREENWORLD-main/GreenWorld/GreenWorld/Views/gestion_user/UserValidationCodeView.swift:92:26 Value of type 'UserValidationCodeView' has no member 'showToast'
-
-
