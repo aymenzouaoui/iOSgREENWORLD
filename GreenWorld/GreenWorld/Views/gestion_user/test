@@ -3,12 +3,11 @@ private func verifyCode() {
     userViewModel.verifyResetCode(email: email, resetCode: fullCode) { result in
         DispatchQueue.main.async {
             switch result {
-            case .success:
-                // Handle the success case and navigate to ResetPasswordView
+            case .success(_):  // You can use an underscore if you don't need the user object
                 self.navigateToResetPassword = true
-            case .failure:
-                // Handle the failure case, e.g., show a toast
+            case .failure(let error):
                 self.showToast = true
+                // Optionally, handle the error more specifically, e.g., update a message variable
                 DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                     self.showToast = false
                 }
