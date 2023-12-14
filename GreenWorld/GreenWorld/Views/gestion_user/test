@@ -73,3 +73,19 @@ struct ResetPasswordView_Previews: PreviewProvider {
         ResetPasswordView()
     }
 }
+
+
+
+func updatePassword(email: String, newPassword: String, completion: @escaping (Result<String, Error>) -> Void) {
+    userService.updatePassword(email: email, newPassword: newPassword) { [weak self] result in
+        DispatchQueue.main.async {
+            switch result {
+            case .success(let message):
+                self?.handleSuccess(message)
+            case .failure(let error):
+                self?.handleFailure(error)
+            }
+            completion(result)
+        }
+    }
+}
