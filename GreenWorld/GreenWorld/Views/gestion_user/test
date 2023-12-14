@@ -8,6 +8,8 @@ struct UserValidationCodeView: View {
     @State private var code2: String = ""
     @State private var code3: String = ""
     @State private var code4: String = ""
+    @State private var navigateToResetPassword = false
+    @State private var showToast = false
 
     var body: some View {
         NavigationView {
@@ -55,6 +57,16 @@ struct UserValidationCodeView: View {
                         .foregroundColor(Color.green)
                 }
                 .padding(.top, 10)
+
+                NavigationLink(destination: ResetPasswordView(), isActive: $navigateToResetPassword) {
+                    EmptyView()
+                }
+
+                if showToast {
+                    Text("Verification failed. Please try again.")
+                        .foregroundColor(Color.red)
+                        // Add more styling for your toast message here
+                }
             }
             .navigationBarHidden(true)
         }
@@ -72,7 +84,19 @@ struct UserValidationCodeView: View {
 
     private func verifyCode() {
         let fullCode = code1 + code2 + code3 + code4
-        userViewModel.verifyResetCode(email: email, resetCode: fullCode)
+        userViewModel.verifyResetCode(email: email, resetCode: fullCode) { [weak self] isSuccess in
+            DispatchQueue.main.async {
+                if isSuccess {
+                    self?.navigateToResetPassword = true
+                } else {
+                    self?.showToast = true
+                    // Optionally, reset showToast to false after a delay
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        self?.showToast = false
+                    }
+                }
+            }
+        }
     }
 
     private func resendCode() {
@@ -100,6 +124,6 @@ struct CodeInputField: View {
 
 struct UserValidationCodeView_Previews: PreviewProvider {
     static var previews: some View {
-        UserValidationCodeView(email: "example@example.com") // Sample email for preview
+        UserValidationCodeView(email: "example@example.com")
     }
 }
