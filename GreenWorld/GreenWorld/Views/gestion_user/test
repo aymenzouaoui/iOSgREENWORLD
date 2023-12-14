@@ -1,4 +1,84 @@
-import SwiftUI
+func verifyResetCode(email: String, resetCode: String, completion: @escaping (Result<User, Error>) -> Void) {
+        let url = URL(string: "\(baseURL)/admin/verifyResetCode")!  // Replace with your actual server URL
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let body: [String: String] = [
+            "email": email,
+            "resetCode": resetCode
+        ]
+        
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error = error {
+                completion(.failure(error))
+                return
+            }
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                completion(.failure(NetworkError.invalidResponse))
+                return
+            }
+
+            if httpResponse.statusCode == 200 {
+                if let data = data {
+                    do {
+                        let user = try JSONDecoder().decode(User.self, from: data)
+                        completion(.success(user))
+                    } catch {
+                        completion(.failure(error))
+                    }
+                } else {
+                    completion(.failure(NetworkError.noData))
+                }
+            } else {
+                // Handle different status codes appropriately
+                if let data = data,
+                   let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let message = jsonObject["message"] as? String {
+                    completion(.failure(NetworkResponseError.custom(message: message)))
+                } else {
+                    completion(.failure(NetworkError.requestFailed(httpResponse.statusCode)))
+                }
+            }
+        }.resume()
+    }
+
+
+
+
+    func verifyResetCode(email: String, resetCode: String, completion: @escaping (Bool) -> Void) {
+            userService.verifyResetCode(email: email, resetCode: resetCode) { [weak self] result in
+                DispatchQueue.main.async {
+                    switch result {
+                        
+                    case .success(let user):
+                        self?.currentUser = user
+                        self?.message = "Reset code verified successfully."
+                        self?.isError = false
+                        
+                        // Save the token in the user defaults
+                        UserDefaults.standard.setValue(user.email, forKey: "email")
+                       
+                    case .failure(let error):
+                        if let networkError = error as? NetworkResponseError {
+                            switch networkError {
+                            case .custom(let message):
+                                self?.message = message
+                            }
+                        } else {
+                            self?.message = error.localizedDescription
+                        }
+                        self?.isError = true
+                    }
+                }
+            }
+        }
+
+
+///view   import SwiftUI
 
 struct UserValidationCodeView: View {
     @StateObject private var userViewModel = UserViewModel()
@@ -130,3 +210,5 @@ struct UserValidationCodeView_Previews: PreviewProvider {
         UserValidationCodeView(email: "example@example.com")
     }
 }
+
+    
