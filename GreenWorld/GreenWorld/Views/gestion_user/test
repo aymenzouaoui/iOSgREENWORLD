@@ -1,74 +1,18 @@
-func updatePassword(email: String, newPassword: String, completion: @escaping (Result<String, Error>) -> Void) {
-        let url = URL(string: "\(baseURL)/newPassword")!
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        let body: [String: String] = ["email": email, "newPassword": newPassword]
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
-
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            guard let httpResponse = response as? HTTPURLResponse,
-                  let data = data else {
-                completion(.failure(NetworkError.invalidResponse))
-                return
-            }
-
-            if httpResponse.statusCode == 200 {
-                do {
-                    if let jsonObject = try JSONSerialization.jsonObject(with: data) as? [String: Any],
-                       let message = jsonObject["message"] as? String {
-                        completion(.success(message))
-                    } else {
-                        completion(.failure(NetworkError.invalidData))
-                    }
-                } catch {
-                    completion(.failure(error))
-                }
-            } else {
-                completion(.failure(NetworkError.requestFailed(httpResponse.statusCode)))
-            }
-        }.resume()
-    }
-
-
-
-
-
-func updatePassword(email: String, newPassword: String) {
-        userService.updatePassword(email: email, newPassword: newPassword) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let message):
-                    self?.message = message
-                    self?.isError = false
-                case .failure(let error):
-                    self?.message = error.localizedDescription
-                    self?.isError = true
-                }
-            }
-        }
-    }
-
-
+Cannot find 'withHapticFeedback' in scope
 
 
 import SwiftUI
 
 struct ResetPasswordView: View {
+    @StateObject private var userViewModel = UserViewModel() // Assuming this has the updatePassword function
     @State private var newPassword: String = ""
     @State private var confirmPassword: String = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
     @State private var isSuccess = false
-
     var body: some View {
         VStack {
-            Image("resetpass") // Replace "resetpass" with your image's name
+            Image("restepas") // Replace "resetpass" with your image's name
                 .resizable()
                 .scaledToFit()
                 .frame(width: 200, height: 100) // Adjust the size as needed
@@ -89,17 +33,26 @@ struct ResetPasswordView: View {
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(5)
                 .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green))
-
             Button("Réinitialiser") {
-                if newPassword == confirmPassword {
-                    alertMessage = "Password has been reset successfully."
-                    isSuccess = true
-                } else {
-                    alertMessage = "Passwords do not match. Please try again."
-                    isSuccess = false
-                }
-                showAlert = true
-            }
+                        if newPassword == confirmPassword {
+                            let email = UserDefaults.standard.string(forKey: "email") ?? ""
+                            userViewModel.updatePassword(email: email, newPassword: newPassword) { result in
+                                switch result {
+                                case .success(let message):
+                                    alertMessage = message
+                                    isSuccess = true
+                                case .failure(let error):
+                                    alertMessage = "Failed to reset password: \(error.localizedDescription)"
+                                    isSuccess = false
+                                }
+                                showAlert = true
+                            }
+                        } else {
+                            alertMessage = "Passwords do not match. Please try again."
+                            isSuccess = false
+                            showAlert = true
+                        }
+                    }
             .padding()
             .background(Color.green)
             .foregroundColor(Color.white)
@@ -119,63 +72,3 @@ struct ResetPasswordView_Previews: PreviewProvider {
         ResetPasswordView()
     }
 }
-
-
-
-import SwiftUI
-
-struct ResetPasswordView: View {
-    @StateObject private var userViewModel = UserViewModel() // Assuming this has the updatePassword function
-    @State private var newPassword: String = ""
-    @State private var confirmPassword: String = ""
-    @State private var showAlert = false
-    @State private var alertMessage = ""
-    @State private var isSuccess = false
-
-    var body: some View {
-        VStack {
-            // ... Image and Text fields
-
-            SecureField("New Password", text: $newPassword)
-                // ... Styling for SecureField
-
-            SecureField("Confirm Password", text: $confirmPassword)
-                // ... Styling for SecureField
-
-            Button("Réinitialiser") {
-                if newPassword == confirmPassword {
-                    let email = UserDefaults.standard.string(forKey: "email") ?? ""
-                    userViewModel.updatePassword(email: email, newPassword: newPassword) { result in
-                        switch result {
-                        case .success(let message):
-                            alertMessage = message
-                            isSuccess = true
-                        case .failure(let error):
-                            alertMessage = "Failed to reset password: \(error.localizedDescription)"
-                            isSuccess = false
-                        }
-                        showAlert = true
-                    }
-                } else {
-                    alertMessage = "Passwords do not match. Please try again."
-                    isSuccess = false
-                    showAlert = true
-                }
-            }
-            // ... Styling for Button
-        }
-        .alert(isPresented: $showAlert) {
-            Alert(title: Text(isSuccess ? "Success" : "Error"),
-                  message: Text(alertMessage),
-                  dismissButton: .default(Text("OK")))
-        }
-        // ... Additional view modifiers if needed
-    }
-}
-
-struct ResetPasswordView_Previews: PreviewProvider {
-    static var previews: some View {
-        ResetPasswordView()
-    }
-}
-
