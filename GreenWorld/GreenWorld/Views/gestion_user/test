@@ -127,3 +127,8 @@ struct UserValidationCodeView_Previews: PreviewProvider {
     }
 }
   func verifyResetCode(email: String, resetCode: String, completion: @escaping (Bool) -> Void) {
+
+
+
+/Users/macmini4/Desktop/iOSgREENWORLD-main/GreenWorld/GreenWorld/Views/gestion_user/UserValidationCodeView.swift:87:82 'weak' may only be applied to class and class-bound protocol types, not 'UserValidationCodeView'
+
