@@ -1,59 +1,99 @@
-import SwiftUI
+ func updatePassword(email: String, newPassword: String, completion: @escaping (Result<String, Error>) -> Void) {
+        guard let url = URL(string: "\(baseURL)/newPassword") else {
+            completion(.failure(NetworkError.invalidURL))
+            return
+        }
 
-struct ResetPasswordView: View {
-    @StateObject private var userViewModel = UserViewModel() // Assuming this has the updatePassword function
-    @State private var newPassword: String = ""
-    @State private var confirmPassword: String = ""
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
-    var body: some View {
-        VStack {
-            Image("resetpass") // Replace with your image's name
-                .resizable()
-                .scaledToFit()
-                .frame(width: 200, height: 100) // Adjust the size as needed
-                .padding(.top)
+        let body: [String: String] = ["email": email, "newPassword": newPassword]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
 
-            Text("Reset Password")
-                .font(.title)
-                .padding()
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
 
-            SecureField("New Password", text: $newPassword)
-                .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(5)
-                .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green))
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    completion(.failure(NetworkError.invalidResponse))
+                    return
+                }
 
-            SecureField("Confirm Password", text: $confirmPassword)
-                .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(5)
-                .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green))
-
-            Button("Réinitialiser") {
-                if newPassword == confirmPassword {
-                    let email = UserDefaults.standard.string(forKey: "email") ?? ""
-                    userViewModel.updatePassword(email: email, newPassword: newPassword) { result in
-                        DispatchQueue.main.async {
-                            // Handle the result here without alert
-                            // For example, update a text view or navigate to another view
+                if httpResponse.statusCode == 200, let data = data {
+                    do {
+                        if let jsonObject = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                           let message = jsonObject["message"] as? String {
+                            completion(.success(message))
+                        } else {
+                            completion(.failure(NetworkError.invalidData))
                         }
+                    } catch {
+                        completion(.failure(error))
                     }
                 } else {
-                    // Handle the case where passwords do not match
-                    // For example, update a text view to show the error
+                    completion(.failure(NetworkError.requestFailed(httpResponse.statusCode)))
                 }
             }
-            .padding()
-            .background(Color.green)
-            .foregroundColor(Color.white)
-            .cornerRadius(10)
+        }.resume()
+    }
+
+
+
+
+
+import Foundation
+
+class UserViewModel: ObservableObject {
+    private var userService = UserService.shared
+    @Published var message: String = ""
+    @Published var isError: Bool = false
+
+    func updatePassword(email: String, newPassword: String) {
+        userService.updatePassword(email: email, newPassword: newPassword) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let message):
+                    self?.message = message
+                    self?.isError = false
+                case .failure(let error):
+                    self?.message = error.localizedDescription
+                    self?.isError = true
+                }
+            }
         }
-        .padding()
+    }
+
+    // Add other user-related methods here if needed
+}
+
+
+
+import SwiftUI
+
+struct UpdatePasswordView: View {
+    @StateObject private var userViewModel = UserViewModel()
+    @State private var newPassword: String = ""
+    @State private var email: String = ""
+
+    var body: some View {
+        // Your view layout
+        VStack {
+            // ... other UI components, such as text fields for email and password
+
+            Button("Update Password") {
+                userViewModel.updatePassword(email: email, newPassword: newPassword)
+            }
+            // You can use the ViewModel's published properties to show error messages or success messages
+        }
     }
 }
 
-struct ResetPasswordView_Previews: PreviewProvider {
+struct UpdatePasswordView_Previews: PreviewProvider {
     static var previews: some View {
-        ResetPasswordView()
+        UpdatePasswordView()
     }
 }
