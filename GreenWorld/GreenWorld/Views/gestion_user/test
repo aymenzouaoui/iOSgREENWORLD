@@ -1,50 +1,53 @@
-import SwiftUI
+import Foundation
 
-struct GestionUserForgetPassword: View {
-    @StateObject private var userViewModel = UserViewModel()
-    @State private var selectedMethod = "Email"
-    @State private var emailOrPhone: String = ""
-    @State private var showAlert = false
-    @State private var navigateToValidation = false
+func updatePassword(email: String, newPassword: String, completion: @escaping (Result<String, Error>) -> Void) {
+    let url = URL(string: "http://yourserver.com/updatePassword")!  // Replace with your actual server URL
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+    
+    let body: [String: String] = [
+        "email": email,
+        "newPassword": newPassword
+    ]
+    
+    request.httpBody = try? JSONSerialization.data(withJSONObject: body)
 
-    var body: some View {
-        NavigationView {
-            VStack {
-                // ... Other UI components
-
-                Button("Resend Code") {
-                    if selectedMethod == "Email" {
-                        resendCode()
-                    } else {
-                        // Handle phone number case if necessary
-                    }
-                }
-                .foregroundColor(Color.blue)
-                .padding()
-
-                // ... Other UI components
-
-                Spacer()
-            }
-            .alert(isPresented: $showAlert) {
-                Alert(
-                    title: Text("Message"),
-                    message: Text(userViewModel.message),
-                    dismissButton: .default(Text("OK"))
-                )
-            }
-            .navigationBarHidden(true)
+    URLSession.shared.dataTask(with: request) { data, response, error in
+        if let error = error {
+            completion(.failure(error))
+            return
         }
-    }
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            completion(.failure(NetworkError.invalidResponse))
+            return
+        }
 
-    private func resendCode() {
-        userViewModel.sendResetCode(email: emailOrPhone)
-        showAlert = true
-    }
+        if httpResponse.statusCode == 200 {
+            if let data = data {
+                do {
+                    if let jsonObject = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                       let message = jsonObject["message"] as? String {
+                        completion(.success(message))
+                    } else {
+                        completion(.failure(NetworkError.invalidData))
+                    }
+                } catch {
+                    completion(.failure(error))
+                }
+            } else {
+                completion(.failure(NetworkError.noData))
+            }
+        } else {
+            completion(.failure(NetworkError.requestFailed(httpResponse.statusCode)))
+        }
+    }.resume()
 }
 
-struct GestionUserForgetPassword_Previews: PreviewProvider {
-    static var previews: some View {
-        GestionUserForgetPassword()
-    }
+enum NetworkError: Error {
+    case invalidResponse
+    case requestFailed(Int)
+    case noData
+    case invalidData
 }
