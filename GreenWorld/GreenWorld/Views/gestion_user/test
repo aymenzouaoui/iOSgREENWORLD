@@ -74,3 +74,5 @@ struct ResetPasswordView_Previews: PreviewProvider {
     }
 }
 
+func updatenewPassword(email: String, newPassword: String, completion: @escaping (Result<String, Error>) -> Void) {
+   
