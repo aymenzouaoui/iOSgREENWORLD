@@ -1,131 +1,24 @@
-private func verifyCode() {
-    let fullCode = code1 + code2 + code3 + code4
-    userViewModel.verifyResetCode(email: email, resetCode: fullCode) { isSuccess in
-        DispatchQueue.main.async {
-            if isSuccess {
-                self.navigateToResetPassword = true
-            } else {
-                self.showToast = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                    self.showToast = false
-                }
-            }
-        }
-    }
+enum CustomError: Error {
+    case emailNotAvailable
 }
 
-
-
-
-
-func verifyResetCode(email: String, resetCode: String, completion: @escaping (Bool) -> Void) {
-        let url = URL(string: "\(baseURL)/admin/verifyResetCode")! // Replace with your server URL
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        let body: [String: String] = [
-            "email": email,
-            "resetCode": resetCode
-        ]
-
-        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
-
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    print("Network error: \(error)")
-                    completion(false)
-                    return
-                }
-
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    print("Invalid response")
-                    completion(false)
-                    return
-                }
-
-                if httpResponse.statusCode == 200 {
-                    completion(true)
-                } else {
-                    completion(false)
-                }
-            }
-        }.resume()
+func updatenewPassword(newPassword: String, completion: @escaping (Result<String, Error>) -> Void) {
+    // Retrieve the email from UserDefaults
+    guard let email = UserDefaults.standard.string(forKey: "UserID") else {
+        completion(.failure(CustomError.emailNotAvailable))
+        return
     }
 
-
-
-
-    func updatenewPassword(email: String, newPassword: String, completion: @escaping (Result<String, Error>) -> Void) {
-        UserService.shared.updatenewPassword( email: email, newPassword: email) { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let message):
-                    self.errorMessage = nil
-                    self.successMessage = message
-                case .failure(let error):
-                    self.successMessage = nil
-                    self.errorMessage = error.localizedDescription
-                }
+    UserService.shared.updatenewPassword(email: email, newPassword: newPassword) { result in
+        DispatchQueue.main.async {
+            switch result {
+            case .success(let message):
+                self.errorMessage = nil
+                self.successMessage = message
+            case .failure(let error):
+                self.successMessage = nil
+                self.errorMessage = error.localizedDescription
             }
         }
     }
-
-
- private let baseURL = "http://192.168.167.138:9091"
-   
-    func verifyResetCode(email: String, resetCode: String, completion: @escaping (Bool) -> Void) {
-            let url = URL(string: "\(baseURL)/admin/verifyResetCode")! // Replace with your server URL
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-            let body: [String: String] = [
-                "email": email,
-                "resetCode": resetCode
-            ]
-        // Save the token in the user defaults
-        UserDefaults.standard.setValue(user?.email, forKey: "UserID")
-            request.httpBody = try? JSONSerialization.data(withJSONObject: body)
-
-            URLSession.shared.dataTask(with: request) { data, response, error in
-                DispatchQueue.main.async {
-                    if let error = error {
-                        print("Network error: \(error)")
-                        completion(false)
-                        return
-                    }
-
-                    guard let httpResponse = response as? HTTPURLResponse else {
-                        print("Invalid response")
-                        completion(false)
-                        return
-                    }
-
-                    if httpResponse.statusCode == 200 {
-                        completion(true)
-                    } else {
-                        completion(false)
-                    }
-                }
-            }.resume()
-        }
-    
-    func updatenewPassword(email: String, newPassword: String, completion: @escaping (Result<String, Error>) -> Void) {
-        UserService.shared.updatenewPassword( email: email, newPassword: email) { result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let message):
-                    self.errorMessage = nil
-                    self.successMessage = message
-                case .failure(let error):
-                    self.successMessage = nil
-                    self.errorMessage = error.localizedDescription
-                }
-            }
-        }
-    }
-    
-    
 }
