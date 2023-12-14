@@ -31,9 +31,7 @@ class UserViewModel: ObservableObject {
         }
     }
 
-    // ... Other functions
-}
 
-struct User: Decodable {
-    // Define your User model properties here
-}
+Cannot infer type of closure parameter 'result' without a type annotatio
+Extra trailing closure passed in call
+   
