@@ -1,86 +1,91 @@
 import SwiftUI
 
-struct GestionUserForgetPassword: View {
-    @State private var selectedMethod = "Email"
-    @State private var emailOrPhone: String = ""
-    @State private var showAlert = false
-    @State private var alertTitle = ""
-    @State private var alertMessage = ""
-    @State private var navigateToValidation = false
+struct UserValidationCodeView: View {
+    @State private var navigationLinkActive: Bool = false
+    @State private var code1: String = ""
+    @State private var code2: String = ""
+    @State private var code3: String = ""
+    @State private var code4: String = ""
 
     var body: some View {
         NavigationView {
-            VStack {
-                HStack {
-                    Image(systemName: "arrow.left")
-                        .foregroundColor(Color.blue)
-                    Spacer()
-                }
-                .padding()
-
-                Spacer()
-
-                Image("validation") // Make sure this image is included in your assets
-                    .resizable()
-                    .frame(width: 262, height: 236)
-                    .padding(.top, 20)
-
-                Picker("Method", selection: $selectedMethod) {
-                    Text("Email").tag("Email")
-                    Text("Phone Number").tag("Phone")
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding(.horizontal, 20)
-
-                TextField(selectedMethod == "Email" ? "Email" : "Phone Number", text: $emailOrPhone)
-                    .keyboardType(selectedMethod == "Email" ? .emailAddress : .phonePad)
-                    .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(5)
-                    .padding(.horizontal, 20)
-
-                Button("Resend Code") {
-                    // Implement the action to resend the code
-                }
-                .foregroundColor(Color.blue)
-                .padding()
-
-                NavigationLink(destination: UserValidationCodeView(), isActive: $navigateToValidation) {
-                    Button("Validate") {
-                        // Perform validation logic if necessary
-                        navigateToValidation = true
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                    .padding(.horizontal, 20)
-                }
-
+        VStack {
+            HStack {
+                Image(systemName: "arrow.left")
+                    .foregroundColor(Color.blue)
                 Spacer()
             }
-            .alert(isPresented: $showAlert) {
-                Alert(
-                    title: Text(alertTitle),
-                    message: Text(alertMessage),
-                    dismissButton: .default(Text("OK"))
-                )
+            .padding()
+
+            Text("Confirmation")
+                .foregroundColor(Color.green)
+                .font(.system(size: 24, weight: .bold))
+                .padding(EdgeInsets(top: 25, leading: 20, bottom: 0, trailing: 20))
+
+            Text("Enter the validation code sent to your email.")
+                .foregroundColor(Color.accentColor)
+                .font(.system(size: 18, weight: .bold))
+                .padding(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
+
+            HStack(spacing: 20) {
+                ForEach(0..<4) { index in
+                    TextField("", text: binding(for: index))
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .frame(width: 50, height: 50)
+                        .font(.system(size: 50, weight: .bold))
+                        .multilineTextAlignment(.center)
+                        .keyboardType(.numberPad)
+                }
             }
-            .navigationBarHidden(true)
+            .padding(EdgeInsets(top: 15, leading: 20, bottom: 0, trailing: 20))
+            NavigationLink(destination: GestionUserSignIn()
+ ) {
+     Text("Verify")
+ }
+ .frame(maxWidth: .infinity)
+ .padding()
+ .background(Color.green)
+ .foregroundColor(.white)
+ .cornerRadius(8)
+ .padding(EdgeInsets(top: 200, leading: 20, bottom: 0, trailing: 20))
+        
+            
+           Text("Didn't receive the code?")
+                .foregroundColor(Color.black)
+                .font(.system(size: 20, weight: .bold))
+                .padding(EdgeInsets(top: 10, leading: 20, bottom: 0, trailing: 20))
+            NavigationLink(destination: GestionUserSignIn(), isActive: $navigationLinkActive) {
+                   EmptyView()
+               }
+               Button(action: {
+                   navigationLinkActive = true
+                 
+               })  {
+                Text("Resend Code")
+                    .foregroundColor(Color.green)
+                    .padding(EdgeInsets(top: 10, leading: 20, bottom: 20, trailing: 20))
+            }
+        }
+        } }
+
+    private func binding(for index: Int) -> Binding<String> {
+        switch index {
+        case 0:
+            return $code1
+        case 1:
+            return $code2
+        case 2:
+            return $code3
+        case 3:
+            return $code4
+        default:
+            fatalError("Index out of range")
         }
     }
 }
 
-// Replace with your actual UserValidationCodeView
-struct UserValidationCodeView: View {
-    var body: some View {
-        Text("User Validation Code View")
-    }
-}
-
-struct GestionUserForgetPassword_Previews: PreviewProvider {
+struct UserValidationCodeView_Previews: PreviewProvider {
     static var previews: some View {
-        GestionUserForgetPassword()
+        UserValidationCodeView()
     }
 }
