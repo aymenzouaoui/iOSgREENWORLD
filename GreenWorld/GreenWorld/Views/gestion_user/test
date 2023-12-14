@@ -1,24 +1,23 @@
 import SwiftUI
 
 struct ProfileView: View {
-    // Sample Data
-    @State private var username: String = "GreenUser123"
-    @State private var email: String = "greenuser@example.com"
+    @State private var username: String = "GreenUser"
+    @State private var email: String = "user@greenworld.com"
     @State private var score: Int = 1200
     @State private var status: String = "Active"
     @State private var role: String = "Environmentalist"
 
     var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "leaf.circle.fill") // Placeholder for profile picture
+        VStack {
+            Image(systemName: "leaf.circle.fill") // Placeholder for profile image
                 .resizable()
                 .scaledToFit()
-                .frame(width: 120, height: 120)
+                .frame(width: 100, height: 100)
                 .foregroundColor(.green)
                 .padding(.top, 50)
 
             Text(username)
-                .font(.title2)
+                .font(.title)
                 .fontWeight(.bold)
                 .foregroundColor(.green)
 
@@ -26,32 +25,33 @@ struct ProfileView: View {
                 .font(.subheadline)
                 .foregroundColor(.gray)
 
-            HStack(spacing: 10) {
+            HStack {
                 Text("Score:")
-                    .fontWeight(.semibold)
+                    .fontWeight(.bold)
                 Text("\(score)")
             }
-            .foregroundColor(.green)
+            .font(.subheadline)
+            .padding(.top, 5)
 
-            HStack(spacing: 10) {
+            HStack {
                 Text("Status:")
-                    .fontWeight(.semibold)
+                    .fontWeight(.bold)
                 Text(status)
             }
-            .foregroundColor(status == "Active" ? .green : .red)
+            .font(.subheadline)
+            .padding(.top, 3)
 
-            HStack(spacing: 10) {
+            HStack {
                 Text("Role:")
-                    .fontWeight(.semibold)
+                    .fontWeight(.bold)
                 Text(role)
             }
-            .foregroundColor(.green)
+            .font(.subheadline)
+            .padding(.top, 3)
 
             Spacer() // Pushes everything to the top
         }
         .padding()
-        .navigationBarTitle("Green World Profile", displayMode: .inline)
-        .navigationBarColor(backgroundColor: .green, textColor: .white)
     }
 }
 
@@ -60,16 +60,3 @@ struct ProfileView_Previews: PreviewProvider {
         ProfileView()
     }
 }
-
-// Extension to customize the navigation bar color
-extension UINavigationController {
-    open override func viewDidLoad() {
-        super.viewDidLoad()
-        navigationBar.tintColor = .white
-        navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
-    }
-}
-
-extension View {
-    func navigationBarColor(backgroundColor: UIColor, textColor: UIColor) -> some View {
-        self.modifier(NavigationBarModifier
