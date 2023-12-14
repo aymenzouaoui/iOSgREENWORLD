@@ -7,19 +7,69 @@ struct GestionUserEditProfil: View {
     @State private var email: String = ""
     @State private var username: String = ""
     @State private var phoneNumber: String = ""
-    @State private var userImage: Image? = Image("user") // Remplacez "user" par le nom de votre image par défaut
-    
+    @State private var userImage: Image? = nil
+
+    func loadImageFromURL() {
+        guard let imageURLString = userViewModel.user?.imageRes,
+              let imageURL = URL(string: imageURLString) else {
+            return
+        }
+
+        URLSession.shared.dataTask(with: imageURL) { data, response, error in
+            guard let data = data, error == nil else {
+                return
+            }
+
+            DispatchQueue.main.async {
+                if let uiImage = UIImage(data: data) {
+                    self.userImage = Image(uiImage: uiImage)
+                } else {
+                    self.userImage = nil
+                }
+            }
+        }.resume()
+    }
+
+    @StateObject private var userViewModel = UserViewModel()
     var body: some View {
         VStack {
             Button(action: {
                 showImagePicker = true
             }) {
-                userImage?
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 200, height: 200)
-                    .clipShape(Circle())
-                    .padding()
+                ZStack {
+                  
+
+                    if let imageURL = URL(string: userViewModel.user?.imageRes ?? "") {
+                        AsyncImage(url: imageURL) { phase in
+                            switch phase {
+                            case .empty:
+                                // Image non chargée
+                                ProgressView()
+                            case .success(let image):
+                                // Image chargée avec succès
+                                image
+                                    .resizable()
+                                    .scaledToFit()
+                                    .clipShape(Ellipse()) // Clip the image into an ellipse
+                                    .frame(width: 120, height: 120) // Adjust the size of the clipped image
+                                    .overlay(Ellipse().stroke(Color.green, lineWidth: 3)) // Add a stroke to the clipped image
+                                    .shadow(color: Color(red: 0.40, green: 0.40, blue: 0.40, opacity: 0.15), radius: 10, y: 4)
+                                    .position(x: 379, y: 20)
+                            case .failure(let error):
+                                // Erreur lors du chargement de l'image
+                                Text("Erreur de chargement de l'image")
+                            @unknown default:
+                                // Cas par défaut
+                                EmptyView()
+                            }
+                        }
+                    } else {
+                        // URL de l'image invalide
+                        Text("URL de l'image invalide")
+                    }
+                }
+
+                .padding(10)
             }
             
             Button(action: {
@@ -29,7 +79,7 @@ struct GestionUserEditProfil: View {
                 Text("Save Image ")
             }
             
-            TextField("Email", text: $email)
+            TextField(userViewModel.user?.email ?? "", text: $email)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .foregroundColor(.gray)
                             .padding(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
@@ -48,7 +98,7 @@ struct GestionUserEditProfil: View {
                                 }
                             )
                         
-                        TextField("Username", text: $username)
+                        TextField(userViewModel.user?.userName ?? "", text: $username)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .foregroundColor(.gray)
                             .padding(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
@@ -67,7 +117,7 @@ struct GestionUserEditProfil: View {
                                 }
                             )
                         
-                        TextField("Phone Number", text: $phoneNumber)
+                        TextField(userViewModel.user?.numTel ?? "", text: $phoneNumber)
                             .textFieldStyle(RoundedBorderTextFieldStyle())
                             .foregroundColor(.gray)
                             .padding(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
@@ -99,6 +149,10 @@ struct GestionUserEditProfil: View {
                     .cornerRadius(12)
 
             }
+        } .onAppear {
+            loadImageFromURL()
+            userViewModel.getUser()
+            print(userViewModel.getUser())
         }
         .sheet(isPresented: $showImagePicker) {
             ImagePickerView(selectedImage: $selectedImage, selectedImageURL: $selectedImageURL, userImage: $userImage)

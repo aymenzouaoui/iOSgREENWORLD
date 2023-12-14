@@ -22,17 +22,21 @@ struct GestionUserSignUp: View {
             VStack {
                 
                 HStack {
-                    
-                    Image("ic_logo")
-                        .resizable()
-                        .frame(width: getRelativeWidth(138.0),
-                               height: getRelativeWidth(38.0))
-                        .scaledToFit()
-                        .clipped()
                    
-                }
-                .frame(width: getRelativeWidth(181.0), height: getRelativeHeight(41.0),
-                       alignment: .leading)
+                   Image("ic_logo")
+                       .resizable()
+                       .padding()
+                       .frame(width: getRelativeWidth(150.0),
+                              height: getRelativeWidth(115.0), alignment: .center)
+                       .scaledToFit()
+                       .clipped()
+                      
+                            
+                   
+                   
+               }
+               .frame(width: getRelativeWidth(181.0), height: getRelativeHeight(41.0),
+                      alignment: .leading)
               
                 Text("Green World Register")
                     .font(.title)
@@ -153,6 +157,8 @@ struct GestionUserSignUp: View {
                            case .success:
                                print ("labes")
                                // Signup successful
+                               
+                                      navigationLinkActive = true // Navigate to the next screen
                                // Set the flag to navigate to FlotteMainView
                            case .failure(let error):
                                // Signup failed
