@@ -4,7 +4,7 @@ struct GestionUserProfil: View {
     @StateObject private var userViewModel = UserViewModel()
     @State private var isEditProfileActive = false
     @State private var navigationLinkActive: Bool = false
-
+    @State private var showLogoutConfirmation : Bool = false
 
    // @StateObject var login = Login()
     var body: some View {
@@ -237,20 +237,29 @@ struct GestionUserProfil: View {
                         EmptyView()
                     }
                     Button(action: {
-                                        navigationLinkActive = true
-                                        //login.logout() // Call logout on the login instance
-                                        
-                                    }) {
-                                        Text("Déconnecter")
-                                            .font(Font.custom("Inter", size: 20).weight(.bold))
-                                            .foregroundColor(.white)
-                                            .padding(EdgeInsets(top: 16, leading: 32, bottom: 16, trailing: 32))
-                                            .frame(width: 343, height: 51)
-                                            .background(Color(red: 0.13, green: 0.61, blue: 0.49))
-                                            .cornerRadius(12)
-                                    }.position(x:375,y:0)
-                                    
-                    
+                                       showLogoutConfirmation = true
+                                   }) {
+                                       Text("Déconnecter")
+                                           .font(Font.custom("Inter", size: 20).weight(.bold))
+                                           .foregroundColor(.white)
+                                           .padding()
+                                           .frame(width: 343, height: 51)
+                                           .background(Color(red: 0.13, green: 0.61, blue: 0.49))
+                                           .cornerRadius(12)
+                                   }
+                                   .position(x:375,y:0)
+                                   .alert(isPresented: $showLogoutConfirmation) {
+                                       Alert(
+                                           title: Text("Déconnexion"),
+                                           message: Text("Êtes-vous sûr de vouloir vous déconnecter ?"),
+                                           primaryButton: .destructive(Text("Déconnecter")) {
+                                               // Handle logout action
+                                               navigationLinkActive = true
+                                               //login.logout() // Uncomment if needed
+                                           },
+                                           secondaryButton: .cancel()
+                                       )
+                                   }
                     
                     
                 }

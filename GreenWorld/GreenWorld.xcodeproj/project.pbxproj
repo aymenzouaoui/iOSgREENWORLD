@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		42620B402B193EE3003A2808 /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42620B3F2B193EE3003A2808 /* Login.swift */; };
 		42620B442B193F99003A2808 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42620B432B193F99003A2808 /* User.swift */; };
+		42E99ABB2B2B5F8500C22F4A /* ResetPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42E99ABA2B2B5F8500C22F4A /* ResetPasswordView.swift */; };
 		42F0F5C72B19462F007C8866 /* StringConstants .swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0F5C62B19462F007C8866 /* StringConstants .swift */; };
 		42F0F5CB2B19573A007C8866 /* GestionUserEditProfil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0F5CA2B19573A007C8866 /* GestionUserEditProfil.swift */; };
 		42F0F5CD2B196C58007C8866 /* GestionUserProfil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0F5CC2B196C58007C8866 /* GestionUserProfil.swift */; };
@@ -21,7 +22,6 @@
 		42F0F5DB2B196D65007C8866 /* UserValidationCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42F0F5DA2B196D65007C8866 /* UserValidationCodeView.swift */; };
 		D135BF5E2B24A54500D36CA1 /* profiltest.swift in Sources */ = {isa = PBXBuildFile; fileRef = D135BF5D2B24A54500D36CA1 /* profiltest.swift */; };
 		D16DC2A62B227BA0009AE4E2 /* SingnUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D16DC2A52B227BA0009AE4E2 /* SingnUpViewModel.swift */; };
-		D1CF4E7B2B22A2BE007847EF /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CF4E7A2B22A2BE007847EF /* Profile.swift */; };
 		D1CF4E7F2B22E670007847EF /* ApiManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CF4E7E2B22E670007847EF /* ApiManager.swift */; };
 		D1CF4E812B22F88A007847EF /* EditProfilEmailUserName.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CF4E802B22F88A007847EF /* EditProfilEmailUserName.swift */; };
 		D1CF4E832B22F9FA007847EF /* EditPassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1CF4E822B22F9FA007847EF /* EditPassword.swift */; };
@@ -73,6 +73,7 @@
 /* Begin PBXFileReference section */
 		42620B3F2B193EE3003A2808 /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
 		42620B432B193F99003A2808 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		42E99ABA2B2B5F8500C22F4A /* ResetPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordView.swift; sourceTree = "<group>"; };
 		42F0F5C62B19462F007C8866 /* StringConstants .swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringConstants .swift"; sourceTree = "<group>"; };
 		42F0F5CA2B19573A007C8866 /* GestionUserEditProfil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestionUserEditProfil.swift; sourceTree = "<group>"; };
 		42F0F5CC2B196C58007C8866 /* GestionUserProfil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GestionUserProfil.swift; sourceTree = "<group>"; };
@@ -85,7 +86,6 @@
 		42F0F5DA2B196D65007C8866 /* UserValidationCodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserValidationCodeView.swift; sourceTree = "<group>"; };
 		D135BF5D2B24A54500D36CA1 /* profiltest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = profiltest.swift; sourceTree = "<group>"; };
 		D16DC2A52B227BA0009AE4E2 /* SingnUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingnUpViewModel.swift; sourceTree = "<group>"; };
-		D1CF4E7A2B22A2BE007847EF /* Profile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Profile.swift; path = ../../../../../../../Profile.swift; sourceTree = "<group>"; };
 		D1CF4E7E2B22E670007847EF /* ApiManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiManager.swift; sourceTree = "<group>"; };
 		D1CF4E802B22F88A007847EF /* EditProfilEmailUserName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfilEmailUserName.swift; sourceTree = "<group>"; };
 		D1CF4E822B22F9FA007847EF /* EditPassword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPassword.swift; sourceTree = "<group>"; };
@@ -285,7 +285,6 @@
 			children = (
 				42F0F5CC2B196C58007C8866 /* GestionUserProfil.swift */,
 				42F0F5CE2B196CB0007C8866 /* GestionUserSignIn.swift */,
-				D1CF4E7A2B22A2BE007847EF /* Profile.swift */,
 				42F0F5D02B196CD8007C8866 /* GestionUserSignUp.swift */,
 				42F0F5D22B196D12007C8866 /* GestionUserForgetPassword.swift */,
 				42F0F5DA2B196D65007C8866 /* UserValidationCodeView.swift */,
@@ -294,6 +293,7 @@
 				D1CF4E802B22F88A007847EF /* EditProfilEmailUserName.swift */,
 				D1CF4E822B22F9FA007847EF /* EditPassword.swift */,
 				D135BF5D2B24A54500D36CA1 /* profiltest.swift */,
+				42E99ABA2B2B5F8500C22F4A /* ResetPasswordView.swift */,
 			);
 			path = gestion_user;
 			sourceTree = "<group>";
@@ -478,6 +478,7 @@
 				FA884BE82B15160F0039DB3B /* Event.swift in Sources */,
 				FA884BF42B151C600039DB3B /* SideMenuView.swift in Sources */,
 				D16DC2A62B227BA0009AE4E2 /* SingnUpViewModel.swift in Sources */,
+				42E99ABB2B2B5F8500C22F4A /* ResetPasswordView.swift in Sources */,
 				42F0F5C72B19462F007C8866 /* StringConstants .swift in Sources */,
 				FAA8F7C52B192CFB001FAF0A /* DechetsList.swift in Sources */,
 				FA884BF22B151C390039DB3B /* SideMenu.swift in Sources */,
@@ -506,7 +507,6 @@
 				FAA8F7CF2B192F84001FAF0A /* CustomCorner.swift in Sources */,
 				42F0F5D52B196D22007C8866 /* GestionUserValidationPassword.swift in Sources */,
 				FA884BA82B15134A0039DB3B /* GreenWorldApp.swift in Sources */,
-				D1CF4E7B2B22A2BE007847EF /* Profile.swift in Sources */,
 				D1CF4E832B22F9FA007847EF /* EditPassword.swift in Sources */,
 				42F0F5DB2B196D65007C8866 /* UserValidationCodeView.swift in Sources */,
 				42F0F5CD2B196C58007C8866 /* GestionUserProfil.swift in Sources */,

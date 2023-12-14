@@ -9,81 +9,84 @@ struct UserValidationCodeView: View {
 
     var body: some View {
         NavigationView {
-        VStack {
-            HStack {
-                Image(systemName: "arrow.left")
-                    .foregroundColor(Color.blue)
-                Spacer()
-            }
-            .padding()
-
-            Text("Confirmation")
-                .foregroundColor(Color.green)
-                .font(.system(size: 24, weight: .bold))
-                .padding(EdgeInsets(top: 25, leading: 20, bottom: 0, trailing: 20))
-
-            Text("Enter the validation code sent to your email.")
-                .foregroundColor(Color.accentColor)
-                .font(.system(size: 18, weight: .bold))
-                .padding(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
-
-            HStack(spacing: 20) {
-                ForEach(0..<4) { index in
-                    TextField("", text: binding(for: index))
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .frame(width: 50, height: 50)
-                        .font(.system(size: 50, weight: .bold))
-                        .multilineTextAlignment(.center)
-                        .keyboardType(.numberPad)
+            VStack {
+                HStack {
+                    Image(systemName: "arrow.left")
+                        .foregroundColor(Color.blue)
+                    Spacer()
                 }
-            }
-            .padding(EdgeInsets(top: 15, leading: 20, bottom: 0, trailing: 20))
-            NavigationLink(destination: GestionUserSignIn()
- ) {
-     Text("Verify")
- }
- .frame(maxWidth: .infinity)
- .padding()
- .background(Color.green)
- .foregroundColor(.white)
- .cornerRadius(8)
- .padding(EdgeInsets(top: 200, leading: 20, bottom: 0, trailing: 20))
-        
-            
-           Text("Didn't receive the code?")
-                .foregroundColor(Color.black)
-                .font(.system(size: 20, weight: .bold))
-                .padding(EdgeInsets(top: 10, leading: 20, bottom: 0, trailing: 20))
-            NavigationLink(destination: GestionUserSignIn(), isActive: $navigationLinkActive) {
-                   EmptyView()
-               }
-               Button(action: {
-                   navigationLinkActive = true
-                 
-               })  {
-                Text("Resend Code")
-                    .foregroundColor(Color.green)
-                    .padding(EdgeInsets(top: 10, leading: 20, bottom: 20, trailing: 20))
-            }
-        }
-        } }
+                .padding()
 
-    private func binding(for index: Int) -> Binding<String> {
-        switch index {
-        case 0:
-            return $code1
-        case 1:
-            return $code2
-        case 2:
-            return $code3
-        case 3:
-            return $code4
-        default:
-            fatalError("Index out of range")
+                Text("Confirmation")
+                    .foregroundColor(Color.green)
+                    .font(.system(size: 24, weight: .bold))
+                    .padding(.top, 25)
+
+                Text("Enter the validation code sent to your email.")
+                    .foregroundColor(Color.accentColor)
+                    .font(.system(size: 18, weight: .bold))
+                    .padding(.top, 20)
+
+                HStack(spacing: 15) {
+                    ForEach(0..<4, id: \.self) { index in
+                        CodeInputField(text: binding(for: index))
+                    }
+                }
+                .padding(.top, 15)
+
+                Button(action: {
+                    // Implement validation logic here
+                }) {
+                    Text("Verify")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
+                }
+                .padding(.top, 200)
+
+                Button(action: {
+                    // Implement resend code logic here
+                }) {
+                    Text("Didn't receive the code? Resend Code")
+                        .foregroundColor(Color.green)
+                }
+                .padding(.top, 10)
+            }
+            .navigationBarHidden(true)
         }
     }
-}
 
+    private func binding(for index: Int) -> Binding<String> {
+            switch index {
+            case 0: return $code1
+            case 1: return $code2
+            case 2: return $code3
+            case 3: return $code4
+            default: fatalError("Index out of range")
+            }
+        }
+    }
+
+    struct CodeInputField: View {
+        @Binding var text: String
+
+        var body: some View {
+            TextField("", text: $text)
+                .onChange(of: text) { newValue in
+                    // Restrict input to numbers only and limit length to 1
+                    if newValue.count > 1 || !newValue.allSatisfy({ $0.isNumber }) {
+                        text = String(newValue.prefix(1))
+                    }
+                }
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .frame(width: 50, height: 50)
+                .font(.system(size: 24, weight: .bold))
+                .multilineTextAlignment(.center)
+                .keyboardType(.numberPad)
+        }
+    }
 struct UserValidationCodeView_Previews: PreviewProvider {
     static var previews: some View {
         UserValidationCodeView()
