@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ResetPasswordView: View {
+    @StateObject private var userViewModel = UserViewModel()
     @State private var newPassword: String = ""
     @State private var confirmPassword: String = ""
     @State private var showAlert = false
@@ -9,10 +10,10 @@ struct ResetPasswordView: View {
 
     var body: some View {
         VStack {
-            Image("restepas") // Replace "YourImageName" with your image's name
+            Image("restepas") // Replace with your image's name
                 .resizable()
                 .scaledToFit()
-                .frame(width: 200, height: 100) // Adjust the size as needed
+                .frame(width: 200, height: 100)
                 .padding(.top)
 
             Text("Reset Password")
