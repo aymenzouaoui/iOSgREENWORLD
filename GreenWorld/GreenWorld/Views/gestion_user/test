@@ -5,6 +5,7 @@ struct ResetPasswordView: View {
     @State private var confirmPassword: String = ""
     @State private var showAlert = false
     @State private var alertMessage = ""
+    @State private var isSuccess = false
 
     var body: some View {
         VStack {
@@ -15,23 +16,33 @@ struct ResetPasswordView: View {
             SecureField("New Password", text: $newPassword)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
+                .background(Color.gray.opacity(0.2))
+                .cornerRadius(5)
 
             SecureField("Confirm Password", text: $confirmPassword)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
+                .background(Color.gray.opacity(0.2))
+                .cornerRadius(5)
 
             Button("Submit") {
                 if newPassword == confirmPassword {
-                    // Implement password reset logic here
                     alertMessage = "Password has been reset successfully."
+                    isSuccess = true
                 } else {
                     alertMessage = "Passwords do not match. Please try again."
+                    isSuccess = false
                 }
                 showAlert = true
             }
             .padding()
+            .background(isSuccess ? Color.green : Color.blue)
+            .foregroundColor(Color.white)
+            .cornerRadius(10)
             .alert(isPresented: $showAlert) {
-                Alert(title: Text("Reset Password"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
+                Alert(title: Text(isSuccess ? "Success" : "Error"),
+                      message: Text(alertMessage),
+                      dismissButton: .default(Text("OK")))
             }
         }
         .padding()
