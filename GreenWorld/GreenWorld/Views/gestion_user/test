@@ -1,296 +1,136 @@
-//
-//  ResetPasswordEmailScreen.swift
-//  Aqua Guard
-//
-//  Created by Amira Ben Mbarek on 11/30/23.
-//
-
 import SwiftUI
 
-struct ForgotPasswordEmailScreen: View {
-    var screenWidth = UIScreen.main.bounds.width
-    @State var textValue: String = ""
-    @State var errorValue: String = ""
-    @StateObject var viewModel: UserViewModel = UserViewModel()
-    @State private var navigationActive: Bool = false
+struct UserValidationCodeView: View {
+    @StateObject private var userViewModel = UserViewModel()
+    let email: String  // Email passed from the previous view
+
+    @State private var code1: String = ""
+    @State private var code2: String = ""
+    @State private var code3: String = ""
+    @State private var code4: String = ""
+    @State private var navigateToResetPassword = false
+    @State  private var showToast = false
 
     var body: some View {
-        ZStack {
+        NavigationView {
             VStack {
-                VStack {
-                    Image("forgot_password2")
-                        .aspectRatio(contentMode: .fit)
-
-                    
+                // Back arrow and title
+                HStack {
+                    Image(systemName: "arrow.left")
+                        .foregroundColor(Color.blue)
+                    Spacer()
                 }
-                .padding(.all)
-                .frame(width: screenWidth)
-                //Spacer()
-                VStack {
-                    VStack {
-                        
-                        Text("Write your email here to receive a code")
-                            .font(.system(size: 20))
-                            .fontWeight (.semibold)
-                            .foregroundColor(.lightBlue)
-                            .padding(.all)
+                .padding()
 
-                        TextInputField("Email", text: $viewModel.email, error: $viewModel.error)
-                            .padding(.bottom)
-                        
-                        //Spacer()
-                        
-                        ZStack {
-                                NavigationLink(
-                                    destination: ForgotPaswordCodeScreen(),
-                                    isActive: $navigationActive
-                                ) {
-                                    EmptyView()
-                                }
-                                .opacity(0)
+                Text("Confirmation")
+                    .foregroundColor(Color.green)
+                    .font(.system(size: 24, weight: .bold))
+                    .padding(.top, 25)
 
-                                Button(action: {
-                                    Task {
-                                        await self.viewModel.sendEmail()
-                                        LoginViewModell.defaults.set(viewModel.email, forKey: "resetEmail")
+                Text("Enter the validation code sent to your email.")
+                    .foregroundColor(Color.accentColor)
+                    .font(.system(size: 18, weight: .bold))
+                    .padding(.top, 20)
 
-                                        if self.viewModel.sent {
-                                            navigationActive = true
-                                        }
-                                    }
-                                }) {
-                                        Text ("Send Code")
-                                            .foregroundColor (.white)
-                                            .fontWeight (.semibold)
-                                            .font(.system(size:22))
-                                            .frame(minWidth: 0, maxWidth: .infinity)
-                                            .frame(width: screenWidth * 0.88, height: screenWidth * 0.13)
-                                }
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .buttonBorderShape(.roundedRectangle)
-                            .tint(Color.blue)
-                            .cornerRadius(30)
-                            .padding(.horizontal)
-                        /*
-                            Button(action: {
-                                Task{
-                                    await viewModel.sendEmail()
-                                }
-                            }, label: {
-                            Text ("Send Code")
-                                .foregroundColor (.white)
-                                .fontWeight (.semibold)
-                                .font(.system(size:22))
-                                .frame(minWidth: 0, maxWidth: .infinity)
-                            
-                            .frame(width: screenWidth * 0.88, height: screenWidth * 0.13)
-                        }
-                                
-                            )
-                            .buttonStyle(.borderedProminent)
-                            .buttonBorderShape(.roundedRectangle)
-                            .tint(Color.blue)
-                            .cornerRadius(30)
-                            .padding(.horizontal)
-                            .background(
-                                NavigationLink(destination: ForgotPaswordCodeScreen(), isActive: $viewModel.sent) {
-                                })*/
+                // Code input fields
+                HStack(spacing: 15) {
+                    ForEach(0..<4, id: \.self) { index in
+                        CodeInputField(text: binding(for: index))
                     }
+                }
+                .padding(.top, 15)
+
+                // Verify button
+                Button(action: {
+                    print("verrrrrr")
+                    verifyCode()
                     
-                    
+                }) {
+                    Text("Verify")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
                 }
+                .padding(.top, 200)
 
+                // Resend code button
+                Button(action: {
+                    resendCode()
+                }) {
+                    Text("Didn't receive the code? Resend Code")
+                        .foregroundColor(Color.green)
+                }
+                .padding(.top, 10)
+
+                // Navigation link to ResetPasswordView
+                NavigationLink(destination: ResetPasswordView(), isActive: $navigateToResetPassword) {
+                    EmptyView()
+                }
             }
-        }.background(
-            Image("background_splash_screen")
-                .resizable()
-                .scaledToFill()
-                .edgesIgnoringSafeArea(.all))
+            .navigationBarHidden(true)
+        }
+    }
+
+    // Binding for each code input field
+    private func binding(for index: Int) -> Binding<String> {
+        switch index {
+        case 0: return $code1
+        case 1: return $code2
+        case 2: return $code3
+        case 3: return $code4
+        default: fatalError("Index out of range")
+        }
+    }
+
+    // Function to verify the code
+    private func verifyCode() {
+        let fullCode = code1 + code2 + code3 + code4
+        userViewModel.verifyResetCode(email: email, resetCode: fullCode) { isSuccess in
+            DispatchQueue.main.async {
+                print("aaaaaaaaaaaaa")
+                print(isSuccess)
+                if isSuccess {
+                    self.navigateToResetPassword = true
+                } else {
+                    self.showToast = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        self.showToast = false
+                    }
+                }
+            }
+        }
+    }
+
+    // Function to resend the verification code
+    private func resendCode() {
+        userViewModel.sendResetCode(email: email)
     }
 }
-#Preview {
-    ForgotPasswordEmailScreen()
-}
-Amira
-BM Amira
-//
-//  UserViewModel.swift
-//  Aqua Guard
-//
-//  Created by Amira Ben Mbarek on 13/12/2023.
-//
 
-import Foundation
+// Custom view for a single code input field
+struct CodeInputField: View {
+    @Binding var text: String
 
-class UserViewModel: ObservableObject{
-    @Published var isDeleted: Bool = false
-    @Published var email:String = ""
-    @Published var code:String = ""
-    @Published var newPassword:String = ""
-    @Published var confirmPassword:String = ""
-    @Published var error:String = ""
-    @Published var sent: Bool = false
-    @Published var verified: Bool = false
-    @Published var reset: Bool = false
-
-    func deleteAccount(id: String)  {
-        Task {
-            do {
-                let (,) = try await UserService.makeRequest(endpoint: "/deleteUserById/" + id, method: "DELETE", body: nil)
-                    isDeleted = true
-                } catch {
-                print("Error deleting account")
-                    isDeleted = false
-            }
-        }
-    }
-    
-    func sendEmail() async {
-        
-        var json = [String:Any]()
-        json["email"] = email
-        
-        do {
-            
-            await MainActor.run {
-                self.sent = true
-            }
-            
-        let (responseData, response) = try await UserService.makeRequest(endpoint: "/sendActivationCode", method: "POST", body: json)
-
-
-            let httpResponse = (response as? HTTPURLResponse)
-        
-        if(type(of: httpResponse!) != HTTPURLResponse.self){
-            await MainActor.run {
-                self.error = "Unexpected error!"
-                self.sent = false
-
-            }
-        }
-        
-        if (httpResponse!.statusCode == 200) {
-                await MainActor.run {
-                self.error = ""
-                self.sent = true
-                }
-
-        }
-        else {
-            await MainActor.run {
-                self.error = "Email not found!"
-                self.sent = false
+    var body: some View {
+        TextField("", text: $text)
+            .onChange(of: text) { newValue in
+                if newValue.count > 1 || !newValue.allSatisfy({ $0.isNumber }) {
+                    text = String(newValue.prefix(1))
                 }
             }
-                        
-        }
-        catch {
-            await MainActor.run {
-                self.error = "Unexpected error!"
-                self.sent = false
-            }
-        }
-        
-    }
-    
-    func verifyCode() async{
-        
-        var json = [String:Any]()
-        json["resetCode"] = code
-        json["email"] = LoginViewModell.defaults.string(forKey: "resetEmail")
-        
-        do {
-            
-            await MainActor.run {
-                self.verified = true
-            }
-            
-        let (responseData, response) = try await UserService.makeRequest(endpoint: "/verifyCode", method: "POST", body: json)
-
-
-            let httpResponse = (response as? HTTPURLResponse)
-        
-        if(type(of: httpResponse!) != HTTPURLResponse.self){
-            await MainActor.run {
-                self.error = "Unexpected error!"
-                self.verified = false
-
-            }
-        }
-        
-        if (httpResponse!.statusCode == 200) {
-                await MainActor.run {
-                self.error = ""
-                self.verified = true
-                }
-
-        }
-        else {
-            await MainActor.run {
-                self.error = "wrong code!"
-                self.verified = false
-                }
-            }
-                        
-        }
-        catch {
-            await MainActor.run {
-                self.error = "Unexpected error!"
-                self.verified = false
-            }
-        }
-        
-    }
-    
-    func resetPassword() async {
-        
-        var json = [String:Any]()
-        json["newPassword"] = newPassword
-        json["confirmPassword"] = confirmPassword
-        json["email"] = LoginViewModell.defaults.string(forKey: "resetEmail")
-
-        do {
-            
-            await MainActor.run {
-                self.reset = true
-            }
-            
-        let (responseData, response) = try await UserService.makeRequest(endpoint: "/forgotPassword", method: "POST", body: json)
-
-
-            let httpResponse = (response as? HTTPURLResponse)
-        
-        if(type(of: httpResponse!) != HTTPURLResponse.self){
-            await MainActor.run {
-                self.error = "Unexpected error!"
-                self.reset = false
-
-            }
-        }
-        
-        if (httpResponse!.statusCode == 200) {
-                await MainActor.run {
-                self.error = ""
-                self.reset = true
-                }
-
-        }
-        else {
-            await MainActor.run {
-                self.error = "wrong passwords!"
-                self.reset = false
-                }
-            }
-                        
-        }
-        catch {
-            await MainActor.run {
-                self.error = "Unexpected error!"
-                self.reset = false
-            }
-        }
-        
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            .frame(width: 50, height: 50)
+            .font(.system(size: 24, weight: .bold))
+            .multilineTextAlignment(.center)
+            .keyboardType(.numberPad)
     }
 }
-Écrire à BM Amira
+
+// Preview for the view
+struct UserValidationCodeView_Previews: PreviewProvider {
+    static var previews: some View {
+        UserValidationCodeView(email: "example@example.com")
+    }
+}
