@@ -34,3 +34,22 @@ func updatePassword(email: String, newPassword: String, completion: @escaping (R
             }
         }.resume()
     }
+
+
+
+
+
+func updatePassword(email: String, newPassword: String) {
+        userService.updatePassword(email: email, newPassword: newPassword) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let message):
+                    self?.message = message
+                    self?.isError = false
+                case .failure(let error):
+                    self?.message = error.localizedDescription
+                    self?.isError = true
+                }
+            }
+        }
+    }
