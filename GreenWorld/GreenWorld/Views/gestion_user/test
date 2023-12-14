@@ -53,3 +53,21 @@ func verifyResetCode(email: String, resetCode: String, completion: @escaping (Bo
             }
         }.resume()
     }
+
+
+
+
+    func updatenewPassword(email: String, newPassword: String, completion: @escaping (Result<String, Error>) -> Void) {
+        UserService.shared.updatenewPassword( email: email, newPassword: email) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let message):
+                    self.errorMessage = nil
+                    self.successMessage = message
+                case .failure(let error):
+                    self.successMessage = nil
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+        }
+    }
