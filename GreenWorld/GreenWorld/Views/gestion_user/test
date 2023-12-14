@@ -1,62 +1,75 @@
 import SwiftUI
 
-struct ResetPasswordView: View {
-    @State private var newPassword: String = ""
-    @State private var confirmPassword: String = ""
-    @State private var showAlert = false
-    @State private var alertMessage = ""
-    @State private var isSuccess = false
+struct ProfileView: View {
+    // Sample Data
+    @State private var username: String = "GreenUser123"
+    @State private var email: String = "greenuser@example.com"
+    @State private var score: Int = 1200
+    @State private var status: String = "Active"
+    @State private var role: String = "Environmentalist"
 
     var body: some View {
-        VStack {
-            Image("YourImageName") // Replace "YourImageName" with your image's name
+        VStack(spacing: 20) {
+            Image(systemName: "leaf.circle.fill") // Placeholder for profile picture
                 .resizable()
                 .scaledToFit()
-                .frame(width: 200, height: 100) // Adjust the size as needed
-                .padding(.top)
+                .frame(width: 120, height: 120)
+                .foregroundColor(.green)
+                .padding(.top, 50)
 
-            Text("Reset Password")
-                .font(.title)
-                .padding()
+            Text(username)
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.green)
 
-            SecureField("New Password", text: $newPassword)
-                .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(5)
-                .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green))
+            Text(email)
+                .font(.subheadline)
+                .foregroundColor(.gray)
 
-            SecureField("Confirm Password", text: $confirmPassword)
-                .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(5)
-                .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green))
-
-            Button("Réinitialiser") {
-                if newPassword == confirmPassword {
-                    alertMessage = "Password has been reset successfully."
-                    isSuccess = true
-                } else {
-                    alertMessage = "Passwords do not match. Please try again."
-                    isSuccess = false
-                }
-                showAlert = true
+            HStack(spacing: 10) {
+                Text("Score:")
+                    .fontWeight(.semibold)
+                Text("\(score)")
             }
-            .padding()
-            .background(Color.green)
-            .foregroundColor(Color.white)
-            .cornerRadius(10)
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text(isSuccess ? "Success" : "Error"),
-                      message: Text(alertMessage),
-                      dismissButton: .default(Text("OK")))
+            .foregroundColor(.green)
+
+            HStack(spacing: 10) {
+                Text("Status:")
+                    .fontWeight(.semibold)
+                Text(status)
             }
+            .foregroundColor(status == "Active" ? .green : .red)
+
+            HStack(spacing: 10) {
+                Text("Role:")
+                    .fontWeight(.semibold)
+                Text(role)
+            }
+            .foregroundColor(.green)
+
+            Spacer() // Pushes everything to the top
         }
         .padding()
+        .navigationBarTitle("Green World Profile", displayMode: .inline)
+        .navigationBarColor(backgroundColor: .green, textColor: .white)
     }
 }
 
-struct ResetPasswordView_Previews: PreviewProvider {
+struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ResetPasswordView()
+        ProfileView()
     }
 }
+
+// Extension to customize the navigation bar color
+extension UINavigationController {
+    open override func viewDidLoad() {
+        super.viewDidLoad()
+        navigationBar.tintColor = .white
+        navigationBar.titleTextAttributes = [.foregroundColor: UIColor.white]
+    }
+}
+
+extension View {
+    func navigationBarColor(backgroundColor: UIColor, textColor: UIColor) -> some View {
+        self.modifier(NavigationBarModifier
