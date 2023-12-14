@@ -69,3 +69,22 @@
             }
         }
     }
+private func verifyCode() {
+    let fullCode = code1 + code2 + code3 + code4
+    userViewModel.verifyResetCode(email: email, resetCode: fullCode) { result in
+        DispatchQueue.main.async {
+            switch result {
+            case .success(let user):
+                // Handle success, possibly using the user object
+                self.navigateToResetPassword = true
+            case .failure(let error):
+                // Handle failure, possibly showing an error message
+                self.showToast = true
+                // You might want to set a specific error message here
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    self.showToast = false
+                }
+            }
+        }
+    }
+}
