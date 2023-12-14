@@ -1,6 +1,3 @@
-Cannot find 'withHapticFeedback' in scope
-
-
 import SwiftUI
 
 struct ResetPasswordView: View {
@@ -34,6 +31,7 @@ struct ResetPasswordView: View {
                 .cornerRadius(5)
                 .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green))
             Button("Réinitialiser") {
+                let generator = UIImpactFeedbackGenerator(style: .medium)
                         if newPassword == confirmPassword {
                             let email = UserDefaults.standard.string(forKey: "email") ?? ""
                             userViewModel.updatePassword(email: email, newPassword: newPassword) { result in
@@ -72,3 +70,4 @@ struct ResetPasswordView_Previews: PreviewProvider {
         ResetPasswordView()
     }
 }
+Extra trailing closure passed in call
