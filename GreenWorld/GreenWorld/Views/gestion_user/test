@@ -4,9 +4,6 @@ struct ResetPasswordView: View {
     @StateObject private var userViewModel = UserViewModel() // Assuming this has the updatePassword function
     @State private var newPassword: String = ""
     @State private var confirmPassword: String = ""
-    @State private var showAlert = false
-    @State private var alertMessage = ""
-    @State private var isSuccess = false
 
     var body: some View {
         VStack {
@@ -37,32 +34,19 @@ struct ResetPasswordView: View {
                     let email = UserDefaults.standard.string(forKey: "email") ?? ""
                     userViewModel.updatePassword(email: email, newPassword: newPassword) { result in
                         DispatchQueue.main.async {
-                            switch result {
-                            case .success(let message):
-                                alertMessage = message
-                                isSuccess = true
-                            case .failure(let error):
-                                alertMessage = "Failed to reset password: \(error.localizedDescription)"
-                                isSuccess = false
-                            }
-                            showAlert = true
+                            // Handle the result here without alert
+                            // For example, update a text view or navigate to another view
                         }
                     }
                 } else {
-                    alertMessage = "Passwords do not match. Please try again."
-                    isSuccess = false
-                    showAlert = true
+                    // Handle the case where passwords do not match
+                    // For example, update a text view to show the error
                 }
             }
             .padding()
             .background(Color.green)
             .foregroundColor(Color.white)
             .cornerRadius(10)
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text(isSuccess ? "Success" : "Error"),
-                      message: Text(alertMessage),
-                      dismissButton: .default(Text("OK")))
-            }
         }
         .padding()
     }
