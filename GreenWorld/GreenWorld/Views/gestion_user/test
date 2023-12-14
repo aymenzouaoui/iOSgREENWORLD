@@ -1,67 +1,30 @@
-import SwiftUI
+func sendResetCode(email: String, completion: @escaping (Result<String, Error>) -> Void) {
+    let url = URL(string: "\(baseURL)/sendResetCode")!
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
-struct ProfileView: View {
-    @State private var username: String = "GreenUser"
-    @State private var email: String = "user@greenworld.com"
-    @State private var score: Int = 1200
-    @State private var status: String = "Active"
-    @State private var role: String = "Environmentalist"
+    let body: [String: String] = ["email": email]
+    request.httpBody = try? JSONSerialization.data(withJSONObject: body, options: [])
 
-    var body: some View {
-        VStack(alignment: .center, spacing: 15) {
-            Image(systemName: "leaf.circle.fill")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 120, height: 120)
-                .foregroundColor(.green)
-                .padding(.top, 30)
-
-            Text(username)
-                .font(.title2)
-                .fontWeight(.bold)
-                .foregroundColor(Color("DarkGreen"))
-
-            Text(email)
-                .font(.subheadline)
-                .foregroundColor(.gray)
-
-            ProfileInfoRow(label: "Score", value: "\(score)")
-            ProfileInfoRow(label: "Status", value: status)
-            ProfileInfoRow(label: "Role", value: role)
-
-            Spacer()
+    URLSession.shared.dataTask(with: request) { data, response, error in
+        if let error = error {
+            completion(.failure(error))
+            return
         }
-        .padding()
-        .background(Color("LightGreen").opacity(0.3))
-        .cornerRadius(20)
-        .padding()
-    }
-}
 
-struct ProfileInfoRow: View {
-    var label: String
-    var value: String
-
-    var body: some View {
-        HStack {
-            Text(label + ":")
-                .fontWeight(.bold)
-                .foregroundColor(Color("DarkGreen"))
-            Text(value)
-            Spacer()
+        guard let httpResponse = response as? HTTPURLResponse else {
+            completion(.failure(NetworkError.invalidResponse))
+            return
         }
-        .padding(.horizontal)
-    }
-}
 
-// Replace with your custom colors in Assets
-extension Color {
-    static let DarkGreen = Color("DarkGreen")
-    static let LightGreen = Color("LightGreen")
-}
-
-struct ProfileView_Previews: PreviewProvider {
-    static var previews: some View {
-        ProfileView()
-    }
+        switch httpResponse.statusCode {
+        case 200:
+            completion(.success("Reset code sent successfully."))
+        case 404:
+            completion(.failure(NetworkError.userNotFound))
+        default:
+            completion(.failure(NetworkError.requestFailed(httpResponse.statusCode)))
+        }
+    }.resume()
 }
