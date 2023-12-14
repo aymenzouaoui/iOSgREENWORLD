@@ -33,7 +33,6 @@ struct ResetPasswordView: View {
                 .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green))
 
            Button("Réinitialiser") {
-   
     if newPassword == confirmPassword {
         let email = UserDefaults.standard.string(forKey: "email") ?? ""
         userViewModel.updatePassword(email: email, newPassword: newPassword) { result in
@@ -55,7 +54,16 @@ struct ResetPasswordView: View {
         showAlert = true
     }
 }
-            .padding()
+.padding()
+.background(Color.green)
+.foregroundColor(Color.white)
+.cornerRadius(10)
+.alert(isPresented: $showAlert) {
+    Alert(title: Text(isSuccess ? "Success" : "Error"),
+          message: Text(alertMessage),
+          dismissButton: .default(Text("OK")))
+}
+     .padding()
             .background(Color.green)
             .foregroundColor(Color.white)
             .cornerRadius(10)
