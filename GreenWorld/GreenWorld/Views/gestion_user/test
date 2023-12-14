@@ -1,11 +1,14 @@
 import SwiftUI
 
-struct GestionUserForgetPassword: View {
+struct UserValidationCodeView: View {
     @StateObject private var userViewModel = UserViewModel()
-    @State private var selectedMethod = "Email"
-    @State private var emailOrPhone: String = ""
-    @State private var showAlert = false
-    @State private var navigateToValidation = false
+      let email: String  // Email passed from the previous view
+
+    @State private var navigationLinkActive: Bool = false
+    @State private var code1: String = ""
+    @State private var code2: String = ""
+    @State private var code3: String = ""
+    @State private var code4: String = ""
 
     var body: some View {
         NavigationView {
@@ -17,70 +20,78 @@ struct GestionUserForgetPassword: View {
                 }
                 .padding()
 
-                Spacer()
+                Text("Confirmation")
+                    .foregroundColor(Color.green)
+                    .font(.system(size: 24, weight: .bold))
+                    .padding(.top, 25)
 
-                Image("validation") // Ensure this image is in your assets
-                    .resizable()
-                    .frame(width: 262, height: 236)
+                Text("Enter the validation code sent to your email.")
+                    .foregroundColor(Color.accentColor)
+                    .font(.system(size: 18, weight: .bold))
                     .padding(.top, 20)
 
-                Picker("Method", selection: $selectedMethod) {
-                    Text("Email").tag("Email")
-                    Text("Phone Number").tag("Phone")
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding(.horizontal, 20)
-
-                TextField(selectedMethod == "Email" ? "Email" : "Phone Number", text: $emailOrPhone)
-                    .keyboardType(selectedMethod == "Email" ? .emailAddress : .phonePad)
-                    .padding()
-                    .background(Color.gray.opacity(0.2))
-                    .cornerRadius(5)
-                    .padding(.horizontal, 20)
-
-                Button("Resend Code") {
-                    if selectedMethod == "Email" {
-                        resendCode()
-                    } else {
-                        // Handle phone number case if necessary
+                HStack(spacing: 15) {
+                    ForEach(0..<4, id: \.self) { index in
+                        CodeInputField(text: binding(for: index))
                     }
                 }
-                .foregroundColor(Color.blue)
-                .padding()
+                .padding(.top, 15)
 
-                NavigationLink(destination: UserValidationCodeView(email: emailOrPhone), isActive: $navigateToValidation) {
-                    Button("Validate") {
-                        navigateToValidation = true
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
-                    .padding(.horizontal, 20)
+                Button(action: {
+                    // Implement validation logic here
+                }) {
+                    Text("Verify")
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.green)
+                        .foregroundColor(.white)
+                        .cornerRadius(8)
                 }
+                .padding(.top, 200)
 
-                Spacer()
-            }
-            .alert(isPresented: $showAlert) {
-                Alert(
-                    title: Text("Message"),
-                    message: Text(userViewModel.message),
-                    dismissButton: .default(Text("OK"))
-                )
+                Button(action: {
+                    // Implement resend code logic here
+                }) {
+                    Text("Didn't receive the code? Resend Code")
+                        .foregroundColor(Color.green)
+                }
+                .padding(.top, 10)
             }
             .navigationBarHidden(true)
         }
     }
 
-    private func resendCode() {
-        userViewModel.sendResetCode(email: emailOrPhone)
-        showAlert = true
+    private func binding(for index: Int) -> Binding<String> {
+            switch index {
+            case 0: return $code1
+            case 1: return $code2
+            case 2: return $code3
+            case 3: return $code4
+            default: fatalError("Index out of range")
+            }
+        }
     }
-}
 
-struct GestionUserForgetPassword_Previews: PreviewProvider {
+    struct CodeInputField: View {
+        @Binding var text: String
+
+        var body: some View {
+            TextField("", text: $text)
+                .onChange(of: text) { newValue in
+                    // Restrict input to numbers only and limit length to 1
+                    if newValue.count > 1 || !newValue.allSatisfy({ $0.isNumber }) {
+                        text = String(newValue.prefix(1))
+                    }
+                }
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .frame(width: 50, height: 50)
+                .font(.system(size: 24, weight: .bold))
+                .multilineTextAlignment(.center)
+                .keyboardType(.numberPad)
+        }
+    }
+struct UserValidationCodeView_Previews: PreviewProvider {
     static var previews: some View {
-        GestionUserForgetPassword()
+        UserValidationCodeView()
     }
 }
