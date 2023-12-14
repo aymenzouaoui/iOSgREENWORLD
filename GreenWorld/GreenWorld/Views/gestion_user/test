@@ -9,21 +9,27 @@ struct ResetPasswordView: View {
 
     var body: some View {
         VStack {
+            Image("YourImageName") // Replace "YourImageName" with your image's name
+                .resizable()
+                .scaledToFit()
+                .frame(width: 200, height: 100) // Adjust the size as needed
+                .padding(.top)
+
             Text("Reset Password")
                 .font(.title)
                 .padding()
 
             SecureField("New Password", text: $newPassword)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(5)
+                .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green))
 
             SecureField("Confirm Password", text: $confirmPassword)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
                 .padding()
                 .background(Color.gray.opacity(0.2))
                 .cornerRadius(5)
+                .overlay(RoundedRectangle(cornerRadius: 5).stroke(Color.green))
 
             Button("Submit") {
                 if newPassword == confirmPassword {
