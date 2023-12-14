@@ -132,3 +132,21 @@ struct UserValidationCodeView_Previews: PreviewProvider {
 
 /Users/macmini4/Desktop/iOSgREENWORLD-main/GreenWorld/GreenWorld/Views/gestion_user/UserValidationCodeView.swift:87:82 'weak' may only be applied to class and class-bound protocol types, not 'UserValidationCodeView'
 
+
+
+private func verifyCode() {
+    let fullCode = code1 + code2 + code3 + code4
+    userViewModel.verifyResetCode(email: email, resetCode: fullCode) { isSuccess in
+        DispatchQueue.main.async {
+            if isSuccess {
+                self.navigateToResetPassword = true
+            } else {
+                self.showToast = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                    self.showToast = false
+                }
+            }
+        }
+    }
+}
+
