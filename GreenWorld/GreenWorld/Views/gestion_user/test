@@ -1,30 +1,87 @@
-NavigationLink(destination: UserValidationCodeView(email: userEmailAddress)) {
-    Text("Go to Validation")
-}
-
-
 import SwiftUI
 
-struct UserValidationCodeView: View {
+struct GestionUserForgetPassword: View {
     @StateObject private var userViewModel = UserViewModel()
-    let email: String  // Email passed from the previous view
+    @State private var selectedMethod = "Email"
+    @State private var emailOrPhone: String = ""
+    @State private var showAlert = false
+    @State private var navigateToValidation = false
 
-    @State private var navigationLinkActive: Bool = false
-    @State private var code1: String = ""
-    @State private var code2: String = ""
-    @State private var code3: String = ""
-    @State private var code4: String = ""
 
-    // ... Rest of your view
+    var body: some View {
+        NavigationView {
+            VStack {
+                HStack {
+                    Image(systemName: "arrow.left")
+                        .foregroundColor(Color.blue)
+                    Spacer()
+                }
+                .padding()
 
-    private func verifyCode() {
-        let fullCode = code1 + code2 + code3 + code4
-        userViewModel.verifyResetCode(email: email, resetCode: fullCode)
-    }
+                Spacer()
 
-    private func resendCode() {
-        userViewModel.sendResetCode(email: email)
-    }
-}
+                Image("validation") // Make sure this image is included in your assets
+                    .resizable()
+                    .frame(width: 262, height: 236)
+                    .padding(.top, 20)
 
-// ... CodeInputField and Preview
+                Picker("Method", selection: $selectedMethod) {
+                    Text("Email").tag("Email")
+                    Text("Phone Number").tag("Phone")
+                }
+                .pickerStyle(SegmentedPickerStyle())
+                .padding(.horizontal, 20)
+
+                TextField(selectedMethod == "Email" ? "Email" : "Phone Number", text: $emailOrPhone)
+                    .keyboardType(selectedMethod == "Email" ? .emailAddress : .phonePad)
+                    .padding()
+                    .background(Color.gray.opacity(0.2))
+                    .cornerRadius(5)
+                    .padding(.horizontal, 20)
+
+                Button("Resend Code") {
+                                    if selectedMethod == "Email" {
+                                        resendCode()
+                                    } else {
+                                        // Handle phone number case if necessary
+                                    }
+                                }
+                                .foregroundColor(Color.blue)
+                                .padding()
+                NavigationLink(destination: UserValidationCodeView(email: userEmailAddress)), isActive: $navigateToValidation) {
+                    Button("Validate") {
+                        // Perform validation logic if necessary
+                        navigateToValidation = true
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                    .padding(.horizontal, 20)
+                }
+
+                Spacer()
+                            }
+                            .alert(isPresented: $showAlert) {
+                                Alert(
+                                    title: Text("Message"),
+                                    
+                                    dismissButton: .default(Text("OK"))
+                                )
+                            }
+                            .navigationBarHidden(true)
+                        }
+                    }
+
+                    private func resendCode() {
+                        userViewModel.sendResetCode(email: emailOrPhone)
+                        showAlert = true
+                    }
+                }
+
+                struct GestionUserForgetPassword_Previews: PreviewProvider {
+                    static var previews: some View {
+                        GestionUserForgetPassword()
+                    }
+                }
