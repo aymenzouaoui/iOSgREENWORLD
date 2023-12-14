@@ -6,10 +6,15 @@ class UserViewModel: ObservableObject {
     @Published var message: String = ""
     @Published var isError: Bool = false
 
-    // ... Other properties and methods
+    // Assuming you have a UserService that handles network requests
+    private var userService: UserService
+
+    init(userService: UserService = .shared) {
+        self.userService = userService
+    }
 
     func verifyResetCode(email: String, resetCode: String) {
-        verifyResetCode(email: email, resetCode: resetCode) { [weak self] result in
+        userService.verifyResetCode(email: email, resetCode: resetCode) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let user):
@@ -30,8 +35,9 @@ class UserViewModel: ObservableObject {
             }
         }
     }
+    // ... Other methods
+}
 
-
-Cannot infer type of closure parameter 'result' without a type annotatio
-Extra trailing closure passed in call
-   
+struct User: Decodable {
+    // Define your User model properties here
+}
