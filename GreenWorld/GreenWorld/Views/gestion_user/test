@@ -150,3 +150,8 @@ private func verifyCode() {
     }
 }
 
+
+
+/Users/macmini4/Desktop/iOSgREENWORLD-main/GreenWorld/GreenWorld/Views/gestion_user/UserValidationCodeView.swift:92:26 Value of type 'UserValidationCodeView' has no member 'showToast'
+
+
