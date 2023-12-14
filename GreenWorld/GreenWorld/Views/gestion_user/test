@@ -2,9 +2,8 @@ import SwiftUI
 
 struct UserValidationCodeView: View {
     @StateObject private var userViewModel = UserViewModel()
-      let email: String  // Email passed from the previous view
+    let email: String  // Email passed from the previous view
 
-    @State private var navigationLinkActive: Bool = false
     @State private var code1: String = ""
     @State private var code2: String = ""
     @State private var code3: String = ""
@@ -38,7 +37,7 @@ struct UserValidationCodeView: View {
                 .padding(.top, 15)
 
                 Button(action: {
-                    // Implement validation logic here
+                    verifyCode()
                 }) {
                     Text("Verify")
                         .frame(maxWidth: .infinity)
@@ -50,7 +49,7 @@ struct UserValidationCodeView: View {
                 .padding(.top, 200)
 
                 Button(action: {
-                    // Implement resend code logic here
+                    resendCode()
                 }) {
                     Text("Didn't receive the code? Resend Code")
                         .foregroundColor(Color.green)
@@ -62,36 +61,45 @@ struct UserValidationCodeView: View {
     }
 
     private func binding(for index: Int) -> Binding<String> {
-            switch index {
-            case 0: return $code1
-            case 1: return $code2
-            case 2: return $code3
-            case 3: return $code4
-            default: fatalError("Index out of range")
-            }
+        switch index {
+        case 0: return $code1
+        case 1: return $code2
+        case 2: return $code3
+        case 3: return $code4
+        default: fatalError("Index out of range")
         }
     }
 
-    struct CodeInputField: View {
-        @Binding var text: String
+    private func verifyCode() {
+        let fullCode = code1 + code2 + code3 + code4
+        userViewModel.verifyResetCode(email: email, resetCode: fullCode)
+    }
 
-        var body: some View {
-            TextField("", text: $text)
-                .onChange(of: text) { newValue in
-                    // Restrict input to numbers only and limit length to 1
-                    if newValue.count > 1 || !newValue.allSatisfy({ $0.isNumber }) {
-                        text = String(newValue.prefix(1))
-                    }
+    private func resendCode() {
+        userViewModel.sendResetCode(email: email)
+    }
+}
+
+struct CodeInputField: View {
+    @Binding var text: String
+
+    var body: some View {
+        TextField("", text: $text)
+            .onChange(of: text) { newValue in
+                if newValue.count > 1 || !newValue.allSatisfy({ $0.isNumber }) {
+                    text = String(newValue.prefix(1))
                 }
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                .frame(width: 50, height: 50)
-                .font(.system(size: 24, weight: .bold))
-                .multilineTextAlignment(.center)
-                .keyboardType(.numberPad)
-        }
+            }
+            .textFieldStyle(RoundedBorderTextFieldStyle())
+            .frame(width: 50, height: 50)
+            .font(.system(size: 24, weight: .bold))
+            .multilineTextAlignment(.center)
+            .keyboardType(.numberPad)
     }
+}
+
 struct UserValidationCodeView_Previews: PreviewProvider {
     static var previews: some View {
-        UserValidationCodeView()
+        UserValidationCodeView(email: "example@example.com") // Sample email for preview
     }
 }
